@@ -54,6 +54,8 @@ public class Game implements IGame
 					}
 				}
 
+		BoardWindow.show(map);
+
 		System.out.println();
 		System.out.print("    ");
 		for (int col = 0; col < BOARD_SIZE; col++) {
