@@ -39,7 +39,7 @@ public class Tasks {
 	public static void menu() {
 
 		IFleet myFleet = null;
-		IGame game = null;
+		Game game = null;
 		menuHelp();
 
 		System.out.print("> ");
@@ -68,7 +68,17 @@ public class Tasks {
 					break;
 				case RAJADA:
 					if (game != null) {
+						// Jogador dispara contra a frota inimiga
 						game.readEnemyFire(in);
+						game.printAlienBoard(true, false);
+
+						if (game.getAlienFleet().getFloatingShips().size() == 0) {
+							game.over();
+							System.exit(0);
+						}
+
+						// Inimigo responde com uma rajada aleatória
+						game.randomEnemyFire();
 						myFleet.printStatus();
 						game.printMyBoard(true, false);
 
@@ -80,7 +90,13 @@ public class Tasks {
 					break;
 				case SIMULA:
 					if (game != null) {
-						while (game.getRemainingShips() > 0){
+						while (game.getRemainingShips() > 0 && game.getAlienFleet().getFloatingShips().size() > 0){
+							// Jogador e inimigo jogam por turnos
+							game.randomPlayerFire();
+							game.printAlienBoard(true, false);
+							if (game.getAlienFleet().getFloatingShips().size() == 0)
+								break;
+
 							game.randomEnemyFire();
 							myFleet.printStatus();
 							game.printMyBoard(true, false);
@@ -91,7 +107,7 @@ public class Tasks {
 							}
 						}
 
-						if (game.getRemainingShips() == 0) {
+						if (game.getRemainingShips() == 0 || game.getAlienFleet().getFloatingShips().size() == 0) {
 							game.over();
 							System.exit(0);
 						}
@@ -101,9 +117,9 @@ public class Tasks {
 					if (game != null)
 						game.printMyBoard(true, true);
 					break;
-                case AJUDA:
-                    menuHelp();
-                    break;
+				case AJUDA:
+					menuHelp();
+					break;
 				default:
 					System.out.println("Que comando é esse??? Repete ...");
 			}

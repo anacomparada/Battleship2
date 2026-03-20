@@ -167,7 +167,8 @@ public class Game implements IGame
 		this.alienMoves = new ArrayList<IMove>();
 		this.myMoves = new ArrayList<IMove>();
 
-		this.alienFleet = new Fleet();
+		// A frota inimiga é gerada de forma aleatória
+		this.alienFleet = Fleet.createRandom();
 		this.myFleet = myFleet;
 
 		this.countInvalidShots = 0;
@@ -191,7 +192,7 @@ public class Game implements IGame
 	@Override
 	public IFleet getAlienFleet()
 	{
-		return myFleet;
+		return alienFleet;
 	}
 
 	@Override
@@ -257,19 +258,67 @@ public class Game implements IGame
 		return Game.jsonShots(shots);
 	}
 
+	/**
+	 * Simula uma rajada aleatória do jogador contra a frota inimiga.
+	 *
+	 * @return JSON com os tiros gerados pelo jogador.
+	 */
+	public String randomPlayerFire() {
+
+		// Criar uma instância de Random com uma seed baseada no timestamp atual
+		Random random = new Random(System.currentTimeMillis());
+
+		Set<IPosition> usablePositions = new HashSet<IPosition>();
+		for (int r = 0; r < BOARD_SIZE; r++)
+			for (int c = 0; c < BOARD_SIZE; c++)
+				usablePositions.add(new Position(r, c));
+
+		this.alienFleet.getSunkShips().forEach(ship -> usablePositions.removeAll(ship.getAdjacentPositions()));
+		this.myMoves.forEach(move ->  usablePositions.removeAll(move.getShots()));
+
+		List<IPosition> candidateShots = new ArrayList<>(usablePositions);
+
+		// Criar lista para armazenar os tiros
+		List<IPosition> shots = new ArrayList<IPosition>();
+
+		System.out.println();
+		// Gerar coordenadas únicas até atingir o número definido por NUMBER_SHOTS
+
+		IPosition newShot = null;
+		if (candidateShots.size() >= Game.NUMBER_SHOTS)
+			while (shots.size() < Game.NUMBER_SHOTS) {
+				newShot = candidateShots.get(random.nextInt(candidateShots.size()));
+				if (!shots.contains(newShot))
+					shots.add(newShot);
+			}
+		else {
+			while (shots.size() < candidateShots.size()) {
+				newShot = candidateShots.get(random.nextInt(candidateShots.size()));
+				if (!shots.contains(newShot))
+					shots.add(newShot);
+			}
+			while (shots.size() < Game.NUMBER_SHOTS)
+				shots.add(newShot);
+		}
+
+		System.out.print("rajada ");
+		for (IPosition shot : shots)
+			System.out.print(shot + " ");
+		System.out.println();
+
+		this.fireShotsAtAlien(shots);
+
+		return Game.jsonShots(shots);
+	}
 
 	/**
-	 * Reads and processes the enemy fire input from the specified scanner.
-	 * The method expects input describing positions for enemy shots. It verifies
-	 * the format, ensures the correct number of positions are provided, and then fires
-	 * on those positions.
+	 * Lê uma rajada do jogador e aplica os tiros à frota inimiga.
+	 * O método espera posições válidas e garante o número correcto de tiros.
 	 *
-	 * @param in the scanner object to read the enemy fire positions from, input must
-	 *           be formatted either as a single token combining the column and row
-	 *           (e.g., "A3") or as separate tokens (e.g., "A" followed by "3").
-	 * @throws IllegalArgumentException if the provided positions are incomplete,
-	 *                                  incorrectly formatted, or do not match the
-	 *                                  required number of shots (NUMBER_SHOTS).
+	 * @param in scanner usado para ler as posições da rajada. O input pode vir
+	 *           num único token (ex.: "A3") ou separado (ex.: "A" seguido de "3").
+	 * @throws IllegalArgumentException se as posições forem incompletas, inválidas
+	 *                                  ou se o número de tiros não for o esperado.
 	 */
 	public String readEnemyFire(Scanner in) {
 
@@ -280,23 +329,25 @@ public class Game implements IGame
 		// Criar lista para armazenar os tiros
 		List<IPosition> shots = new ArrayList<>();
 
-		Scanner inputScanner = new Scanner(input);
-		while (shots.size() < NUMBER_SHOTS && inputScanner.hasNext()) {
-			// Lê a próxima parte e constrói uma posição
-			String token = inputScanner.next();
+		try (Scanner inputScanner = new Scanner(input)) {
+			while (shots.size() < NUMBER_SHOTS && inputScanner.hasNext()) {
+				// Lê a próxima parte e constrói uma posição
+				String token = inputScanner.next();
 
-			if (token.matches("[A-Za-z]")) {
-				// Caso seja somente uma coluna ("A", "B", etc.), esperar o próximo número
-				if (inputScanner.hasNextInt()) {
-					int row = inputScanner.nextInt();
-					shots.add(new Position(token.toUpperCase().charAt(0), row));
+				if (token.matches("[A-Za-z]")) {
+					// Caso seja somente uma coluna ("A", "B", etc.), esperar o próximo número
+					if (inputScanner.hasNextInt()) {
+						int row = inputScanner.nextInt();
+						shots.add(new Position(token.toUpperCase().charAt(0), row));
+					} else {
+						throw new IllegalArgumentException("Posição incompleta! A coluna '" + token + "' não é seguida por uma linha.");
+					}
 				} else {
-					throw new IllegalArgumentException("Posição incompleta! A coluna '" + token + "' não é seguida por uma linha.");
+					// Caso o token já contenha a coluna e a linha juntas (ex.: "A3")
+					try (Scanner singleScanner = new Scanner(token)) {
+						shots.add(Tasks.readClassicPosition(singleScanner));
+					}
 				}
-			} else {
-				// Caso o token já contenha a coluna e a linha juntas (ex.: "A3")
-				Scanner singleScanner = new Scanner(token);
-				shots.add(Tasks.readClassicPosition(singleScanner));
 			}
 		}
 
@@ -304,7 +355,7 @@ public class Game implements IGame
 			throw new IllegalArgumentException("Você deve inserir exatamente " + NUMBER_SHOTS + " posições!");
 		}
 
-		this.fireShots(shots);
+		this.fireShotsAtAlien(shots);
 
 		return Game.jsonShots(shots);
 	}
@@ -348,6 +399,33 @@ public class Game implements IGame
 	}
 
 	/**
+	 * Dispara uma rajada do jogador contra a frota inimiga.
+	 *
+	 * @param shots lista de posições a atingir na frota inimiga
+	 */
+	private void fireShotsAtAlien(List<IPosition> shots)
+	{
+		assert shots != null;
+
+		List<ShotResult> shotResults = new ArrayList<ShotResult>();
+		if (shots.size() != NUMBER_SHOTS) {
+			throw new IllegalArgumentException("Must fire exactly " + NUMBER_SHOTS + " shots per move.");
+		}
+
+		List<IPosition> alreadyShot = new ArrayList<IPosition>();
+		for (IPosition pos : shots) {
+			shotResults.add(fireSingleShotAtAlien(pos, alreadyShot.contains(pos)));
+			alreadyShot.add(pos);
+		}
+
+		Move move = new Move(moveNumber, shots, shotResults);
+
+		move.processEnemyFire(true);
+		myMoves.add(move);
+		moveNumber++;
+	}
+
+	/**
 	 * Fires a single shot at the specified position, handling scenarios such as invalid positions,
 	 * repeated shots, hits, misses, and sinking a ship. The method updates the necessary counters
 	 * for invalid shots, repeated shots, hits, and sunk ships.
@@ -383,6 +461,31 @@ public class Game implements IGame
 			}
 			return new ShotResult(true, false, ship, !ship.stillFloating());
 		}
+	}
+
+	/**
+	 * Resolve um tiro do jogador sobre a frota inimiga.
+	 *
+	 * @param pos posição a atingir
+	 * @param isRepeated indica se o tiro já aparece na mesma rajada
+	 * @return resultado do tiro
+	 */
+	private ShotResult fireSingleShotAtAlien(IPosition pos, boolean isRepeated) {
+
+		assert pos != null;
+
+		if (!pos.isInside())
+			return new ShotResult(false, false, null, false);
+
+		if (isRepeated || repeatedShotAtAlien(pos))
+			return new ShotResult(true, true, null, false);
+
+		IShip ship = alienFleet.shipAt(pos);
+		if (ship == null)
+			return new ShotResult(true, false, null, false);
+
+		ship.shoot(pos);
+		return new ShotResult(true, false, ship, !ship.stillFloating());
 	}
 
 	@Override
@@ -426,20 +529,42 @@ public class Game implements IGame
 		return false;
 	}
 
+	/**
+	 * Verifica se uma posição já foi usada em jogadas do jogador.
+	 *
+	 * @param pos posição a verificar
+	 * @return true se a posição já foi usada, false caso contrário
+	 */
+	private boolean repeatedShotAtAlien(IPosition pos)
+	{
+		assert pos != null;
+
+		for (IMove move : myMoves)
+			if (move.getShots().contains(pos))
+				return true;
+		return false;
+	}
+
 	public void printMyBoard(boolean show_shots, boolean show_legend)
 	{
+		System.out.println("=== MINHA FROTA ===");
 		Game.printBoard(this.myFleet, this.alienMoves, show_shots, show_legend);
+		System.out.println("=== === ===");
+
 	}
 
 	public void printAlienBoard(boolean show_shots, boolean show_legend)
 	{
+		System.out.println("=== FROTA INIMIGA ===");
 		Game.printBoard(this.alienFleet, this.myMoves, show_shots, show_legend);
+		System.out.println("=== === ===");
+
 	}
 
 	public void over() {
-			System.out.println();
-			System.out.println("+--------------------------------------------------------------+");
-			System.out.println("| Maldito sejas, Java Sparrow, eu voltarei, glub glub glub ... |");
-			System.out.println("+--------------------------------------------------------------+");
+		System.out.println();
+		System.out.println("+--------------------------------------------------------------+");
+		System.out.println("| Maldito sejas, Java Sparrow, eu voltarei, glub glub glub ... |");
+		System.out.println("+--------------------------------------------------------------+");
 	}
 }
