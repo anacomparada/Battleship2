@@ -1,6 +1,7 @@
 package battleship;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -132,6 +133,39 @@ public class Game implements IGame
 
 		// Retornar o JSON
 		return jsonString;
+	}
+
+	/**
+	 * Converte um JSON com tiros numa lista de posições.
+	 * O JSON pode ser um array de objetos ou um objeto com a propriedade "shots".
+	 *
+	 * @param json string JSON com tiros
+	 * @return lista de posições a disparar
+	 */
+	private static List<IPosition> jsonToShots(String json) {
+
+		assert json != null;
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			JsonNode root = objectMapper.readTree(json);
+			JsonNode shotsNode = root;
+			if (root.isObject() && root.has("shots"))
+				shotsNode = root.get("shots");
+
+			if (!shotsNode.isArray())
+				throw new IllegalArgumentException("JSON INVALIDO : ENVIA O JSON TODO NUMA SÓ LINHA  (sem espacos em branco) ");
+
+			List<IPosition> shots = new ArrayList<>();
+			for (JsonNode shotNode : shotsNode) {
+				String row = shotNode.get("row").asText();
+				int column = shotNode.get("column").asInt();
+				shots.add(new Position(row.charAt(0), column));
+			}
+			return shots;
+		} catch (Exception e) {
+			throw new IllegalArgumentException("JSON inválido: não foi possível ler os tiros.", e);
+		}
 	}
 
 	//------------------------------------------------------------------
@@ -323,9 +357,20 @@ public class Game implements IGame
 		assert in != null;
 
 		String input = in.nextLine().trim();
+		while (input.isEmpty() && in.hasNextLine())
+			input = in.nextLine().trim();
 
 		// Criar lista para armazenar os tiros
 		List<IPosition> shots = new ArrayList<>();
+
+		if (input.startsWith("{") || input.startsWith("[")) {
+			shots = jsonToShots(input);
+			if (shots.size() != NUMBER_SHOTS) {
+				throw new IllegalArgumentException("Deves inserir exatamente " + NUMBER_SHOTS + " posicoes");
+			}
+			this.fireShotsAtAlien(shots);
+			return Game.jsonShots(shots);
+		}
 
 		try (Scanner inputScanner = new Scanner(input)) {
 			while (shots.size() < NUMBER_SHOTS && inputScanner.hasNext()) {
