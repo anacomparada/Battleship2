@@ -20,16 +20,19 @@ public class Tasks {
      */
     private static final String GOODBYE_MESSAGE = "Bons ventos!";
 
-    // ── Menu commands ────────────────────────────────────────────────────────
-    private static final String AJUDA      = "ajuda";
-    private static final String GERAFROTA  = "gerafrota";
-    private static final String LEFROTA    = "lefrota";
-    private static final String DESISTIR   = "desisto";
-    private static final String RAJADA     = "rajada";
-    private static final String TIROS      = "tiros";
-    private static final String MAPA       = "mapa";
-    private static final String STATUS     = "estado";
-    private static final String SIMULA     = "simula";
+	/**
+	 * Strings to be used by the user
+	 */
+	private static final String AJUDA = "ajuda";
+	private static final String GERAFROTA = "gerafrota";
+	private static final String LEFROTA = "lefrota";
+	private static final String DESISTIR = "desisto";
+	private static final String RAJADA = "rajada";
+	private static final String TIROS = "tiros";
+	private static final String MAPA = "mapa";
+	private static final String STATUS = "estado";
+	private static final String SIMULA = "simula";
+	private static final String GERAREPORT = "gerareport";
     private static final String RANKING    = "ranking";   // NEW: show scoreboard
     private static final String NOME       = "nome";      // NEW: set player name
 
@@ -41,44 +44,39 @@ public class Tasks {
      */
     public static void menu() {
 
-        IFleet myFleet = null;
-        Game   game    = null;
-        menuHelp();
+		IFleet myFleet = null;
+		Game game = null;
+		menuHelp();
 
-        System.out.print("> ");
-        Scanner in = new Scanner(System.in);
-        String command = in.next();
+		System.out.print("> ");
+		Scanner in = new Scanner(System.in);
+		String command = in.next();
+		while (!command.equals(DESISTIR)) {
 
-        while (!command.equals(DESISTIR)) {
-
-            switch (command) {
-
-                // ── Fleet commands ───────────────────────────────────────────
-                case GERAFROTA:
-                    myFleet = Fleet.createRandom();
-                    game    = new Game(myFleet);
-                    game.printMyBoard(false, true);
-                    break;
-
-                case LEFROTA:
-                    myFleet = buildFleet(in);
-                    game    = new Game(myFleet);
-                    game.printMyBoard(false, true);
-                    break;
-
-                case STATUS:
-                    if (myFleet != null) myFleet.printStatus();
-                    break;
-
-                case MAPA:
-                    if (myFleet != null) game.printMyBoard(false, true);
-                    break;
-
-                // ── Combat commands ──────────────────────────────────────────
-                case RAJADA:
-                    if (game != null) {
-                        game.readEnemyFire(in);
-                        game.printAlienBoard(true, false);
+			switch (command) {
+				case GERAFROTA:
+					myFleet = Fleet.createRandom();
+					game = new Game(myFleet);
+					game.printMyBoard(false, true);
+					break;
+				case LEFROTA:
+					myFleet = buildFleet(in);
+					game = new Game(myFleet);
+					game.printMyBoard(false, true);
+					break;
+				case STATUS:
+					if (myFleet != null)
+						myFleet.printStatus();
+					break;
+				case MAPA:
+					if (myFleet != null)
+						game.printMyBoard(false, true);
+					break;
+				case RAJADA:
+					if (game != null) {
+						// Jogador dispara contra a frota inimiga
+						game.readEnemyFire(in);
+						game.printAlienBoard(true, false);
 
                         if (game.getAlienFleet().getFloatingShips().isEmpty()) {
                             game.over();
@@ -151,6 +149,14 @@ public class Tasks {
                     }
                     break;
 
+                case GERAREPORT:
+                    if (game != null) {
+                        PdfExporter.exportGameReport(game, "report.pdf");
+                    } else {
+                        System.out.println("O jogo ainda não começou. Usa o comando 'gerafrota' primeiro.");
+                    }
+                    break;
+
                 case AJUDA:
                     menuHelp();
                     break;
@@ -164,6 +170,7 @@ public class Tasks {
         }
         System.out.println(GOODBYE_MESSAGE);
     }
+
 
     /**
      * This function provides help information about the menu commands.
@@ -180,6 +187,7 @@ public class Tasks {
         System.out.println("- " + SIMULA    + ":    Simula um jogo completo.");
         System.out.println("- " + TIROS     + ":     Lista os tiros válidos realizados.");
         System.out.println("- " + RANKING   + ":   Mostra o Hall of Fame.");
+        System.out.println("- " + GERAREPORT + ": Exporta o histórico de jogadas para um ficheiro PDF.");
         System.out.println("- " + DESISTIR  + ":    Encerra o jogo.");
         System.out.println("===============================================================");
     }
