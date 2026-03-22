@@ -412,6 +412,8 @@ public class Game implements IGame
 		assert in != null;
 
 		String input = in.nextLine().trim();
+		if (input.toLowerCase().startsWith("rajada"))
+			input = input.substring("rajada".length()).trim();
 		while (input.isEmpty() && in.hasNextLine())
 			input = in.nextLine().trim();
 
@@ -667,4 +669,65 @@ public class Game implements IGame
 		System.out.println("| Maldito sejas, Java Sparrow, eu voltarei, glub glub glub ... |");
 		System.out.println("+--------------------------------------------------------------+");
 	}
+
+	/**
+	 * Lê uma rajada do inimigo e aplica os tiros à nossa frota.
+	 * O método aceita o mesmo formato usado pelo jogador.
+	 *
+	 * @param in scanner usado para ler as posições da rajada
+	 * @return JSON com os tiros do inimigo
+	 */
+	public String readAlienFire(Scanner in) {
+
+		assert in != null;
+
+		String input = in.nextLine().trim();
+		if (input.toLowerCase().startsWith("rajada"))
+			input = input.substring("rajada".length()).trim();
+		while (input.isEmpty() && in.hasNextLine())
+			input = in.nextLine().trim();
+
+		// Criar lista para armazenar os tiros
+		List<IPosition> shots = new ArrayList<>();
+
+		if (input.startsWith("{") || input.startsWith("[")) {
+			shots = jsonToShots(input);
+			if (shots.size() != NUMBER_SHOTS) {
+				throw new IllegalArgumentException("Deves inserir exatamente " + NUMBER_SHOTS + " posicoes");
+			}
+			this.fireShots(shots);
+			return Game.jsonShots(shots);
+		}
+
+		try (Scanner inputScanner = new Scanner(input)) {
+			while (shots.size() < NUMBER_SHOTS && inputScanner.hasNext()) {
+				// Lê a próxima parte e constrói uma posição
+				String token = inputScanner.next();
+
+				if (token.matches("[A-Za-z]")) {
+					// Caso seja somente uma coluna ("A", "B", etc.), esperar o próximo número
+					if (inputScanner.hasNextInt()) {
+						int row = inputScanner.nextInt();
+						shots.add(new Position(token.toUpperCase().charAt(0), row));
+					} else {
+						throw new IllegalArgumentException("Posição incompleta! A coluna '" + token + "' não é seguida por uma linha.");
+					}
+				} else {
+					// Caso o token já contenha a coluna e a linha juntas (ex.: "A3")
+					try (Scanner singleScanner = new Scanner(token)) {
+						shots.add(Tasks.readClassicPosition(singleScanner));
+					}
+				}
+			}
+		}
+
+		if (shots.size() != NUMBER_SHOTS) {
+			throw new IllegalArgumentException("Você deve inserir exatamente " + NUMBER_SHOTS + " posições!");
+		}
+
+		this.fireShots(shots);
+
+		return Game.jsonShots(shots);
+	}
+
 }

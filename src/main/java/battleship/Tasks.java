@@ -86,7 +86,9 @@ public class Tasks {
                             System.exit(0);
                         }
 
-                        game.randomEnemyFire();
+                        //game.randomEnemyFire();
+                        System.out.print("> rajada inimiga ");
+                        game.readAlienFire(in);
                         myFleet.printStatus();
                         game.printMyBoard(true, false);
 
