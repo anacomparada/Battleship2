@@ -77,10 +77,17 @@ public class Tasks {
 							System.exit(0);
 						}
 
+<<<<<<< Updated upstream
 						// Inimigo responde com uma rajada aleatória
 						game.randomEnemyFire();
 						myFleet.printStatus();
 						game.printMyBoard(true, false);
+=======
+                        System.out.print("> rajada inimiga ");
+                        game.readAlienFire(in);
+                        myFleet.printStatus();
+                        game.printMyBoard(true, false);
+>>>>>>> Stashed changes
 
 						if (game.getRemainingShips() == 0) {
 							game.over();
