@@ -10,7 +10,7 @@ import java.util.*;
 public class Game implements IGame
 {
 
-	private static char[][] buildMap(IFleet fleet, List<IMove> moves, boolean showShots) {
+	private static char[][] buildMap(IFleet fleet, List<IMove> moves, boolean showShots, boolean hideShips) {
 
 		assert fleet != null;
 		assert moves != null;
@@ -21,9 +21,11 @@ public class Game implements IGame
 			for (int c = 0; c < BOARD_SIZE; c++)
 				map[r][c] = EMPTY_MARKER;
 
+		// Os navios estão lá, mas não os demos ver visualmente no tabuleiro.
 		for (IShip ship : fleet.getShips()) {
-			for (IPosition shipPos : ship.getPositions())
+			for (IPosition shipPos : ship.getPositions()) {
 				map[shipPos.getRow()][shipPos.getColumn()] = SHIP_MARKER;
+			}
 
 			if (!ship.stillFloating()) {
 				for (IPosition adjacentPos : ship.getAdjacentPositions())
@@ -43,6 +45,17 @@ public class Game implements IGame
 
 						if (map[row][col] == EMPTY_MARKER || map[row][col] == SHIP_ADJACENT_MARKER)
 							map[row][col] = SHOT_WATER_MARKER;
+					}
+				}
+			}
+		}
+
+		// Esconder visualmente os barcos
+		if (hideShips) {
+			for (int r = 0; r < BOARD_SIZE; r++) {
+				for (int c = 0; c < BOARD_SIZE; c++) {
+					if (map[r][c] == SHIP_MARKER) {
+						map[r][c] = EMPTY_MARKER;
 					}
 				}
 			}
@@ -137,10 +150,19 @@ public class Game implements IGame
 
 
 	public void printBothBoards(boolean showShots) {
-		char[][] myMap = buildMap(this.myFleet, this.alienMoves, showShots);
-		char[][] alienMap = buildMap(this.alienFleet, this.myMoves, showShots);
 
-		BoardWindow.show(myMap, alienMap);
+		char[][] myMap = buildMap(this.myFleet, this.alienMoves, showShots, false);
+		char[][] alienMap = buildMap(this.alienFleet, this.myMoves, showShots, true);
+
+		List<IPosition> lastMyShots = this.myMoves.isEmpty()
+				? new ArrayList<>()
+				: this.myMoves.get(this.myMoves.size() - 1).getShots();
+
+		List<IPosition> lastAlienShots = this.alienMoves.isEmpty()
+				? new ArrayList<>()
+				: this.alienMoves.get(this.alienMoves.size() - 1).getShots();
+
+		BoardWindow.show(myMap, alienMap, lastMyShots, lastAlienShots);
 	}
 
 
@@ -728,5 +750,7 @@ public class Game implements IGame
 		System.out.println("+--------------------------------------------------------------+");
 		System.out.println("| Maldito sejas, Java Sparrow, eu voltarei, glub glub glub ... |");
 		System.out.println("+--------------------------------------------------------------+");
+
+		BoardWindow.close();
 	}
 }
