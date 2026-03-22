@@ -66,6 +66,7 @@ public class Tasks {
 
 		IFleet myFleet = null;
 		Game game = null;
+        Game lastGame = null;
 
         Scanner in = new Scanner(System.in);
         askPlayerName(in);
@@ -105,7 +106,10 @@ public class Tasks {
                             // ── Save WIN ──────────────────────────────────────
                             Scoreboard.saveResult(
                                 new GameResult(playerName, game.getMyMoves().size(), true));
-                            System.exit(0);
+                            System.out.println("Podes usar 'gerareport' ou 'ranking' antes de saíres.");
+                            lastGame = game; game = null; myFleet = null;
+                            break;
+
                         }
 
                         System.out.print("> rajada inimiga ");
@@ -118,7 +122,8 @@ public class Tasks {
                             // ── Save LOSS ─────────────────────────────────────
                             Scoreboard.saveResult(
                                 new GameResult(playerName, game.getMyMoves().size(), false));
-                            System.exit(0);
+                            System.out.println("Podes usar 'gerareport' ou 'ranking' antes de saíres.");
+                            lastGame = game; game = null; myFleet = null;
                         }
                     }
                     break;
@@ -148,7 +153,8 @@ public class Tasks {
                         game.over();
                         Scoreboard.saveResult(
                             new GameResult(playerName, game.getMyMoves().size(), won));
-                        System.exit(0);
+                        System.out.println("Podes usar 'gerareport' ou 'ranking' antes de saíres.");
+                        lastGame = game; game = null; myFleet = null;
                     }
                     break;
 
@@ -175,8 +181,9 @@ public class Tasks {
                     break;
 
                 case GERAREPORT:
-                    if (game != null) {
-                        PdfExporter.exportGameReport(game, "report.pdf");
+                    Game reportGame = (game != null) ? game : lastGame;
+                    if (reportGame != null) {
+                        PdfExporter.exportGameReport(reportGame, "report.pdf");
                     } else {
                         System.out.println("O jogo ainda não começou. Usa o comando 'gerafrota' primeiro.");
                     }
