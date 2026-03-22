@@ -40,16 +40,38 @@ public class Tasks {
     private static String playerName = "Jogador";
 
     /**
+     * Asks the player to type their name at the start of the session.
+     * The prompt is repeated until a non-blank name is entered.
+     * After a valid name is set, a welcome message is printed.
+     *
+     * @param in the active {@link Scanner}
+     */
+    public static void askPlayerName(Scanner in) {
+        System.out.println("╔══════════════════════════════════════╗");
+        System.out.println("║   ⚓  Bem-vindo ao Battleship!  ⚓   ║");
+        System.out.println("╚══════════════════════════════════════╝");
+        String nome = "";
+        while (nome.isEmpty()) {
+            System.out.print("Introduz o teu nome de navegador: ");
+            if (in.hasNextLine()) nome = in.nextLine().trim();
+        }
+        playerName = nome;
+        System.out.println("\nBoas vindas, Capitão " + playerName + "! Que a fortuna te guie.\n");
+    }
+
+    /**
      * Main menu loop.
      */
     public static void menu() {
 
 		IFleet myFleet = null;
 		Game game = null;
-		menuHelp();
+
+        Scanner in = new Scanner(System.in);
+        askPlayerName(in);
+        menuHelp();
 
 		System.out.print("> ");
-		Scanner in = new Scanner(System.in);
 		String command = in.next();
 		while (!command.equals(DESISTIR)) {
 
@@ -139,14 +161,16 @@ public class Tasks {
                     Scoreboard.interactiveDisplay(in);
                     break;
 
-                // ── Set player name command (NEW) ────────────────────────────
+                // ── Set player name command ───────────────────────────────────
                 case NOME:
-                    System.out.print("Introduz o teu nome de jogador: ");
-                    if (in.hasNextLine()) in.nextLine(); // consume leftover newline
-                    String nome = in.hasNextLine() ? in.nextLine().trim() : playerName;
+                    System.out.print("Novo nome de navegador: ");
+                    in.nextLine(); // consume leftover newline after in.next()
+                    String nome = in.hasNextLine() ? in.nextLine().trim() : "";
                     if (!nome.isEmpty()) {
                         playerName = nome;
-                        System.out.println("Nome definido como: " + playerName);
+                        System.out.println("Nome actualizado para: Capitão " + playerName);
+                    } else {
+                        System.out.println("Nome não alterado (continua: " + playerName + ")");
                     }
                     break;
 
