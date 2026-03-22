@@ -9,6 +9,49 @@ import java.util.*;
 
 public class Game implements IGame
 {
+
+	private static char[][] buildMap(IFleet fleet, List<IMove> moves, boolean showShots) {
+
+		assert fleet != null;
+		assert moves != null;
+
+		char[][] map = new char[BOARD_SIZE][BOARD_SIZE];
+
+		for (int r = 0; r < BOARD_SIZE; r++)
+			for (int c = 0; c < BOARD_SIZE; c++)
+				map[r][c] = EMPTY_MARKER;
+
+		for (IShip ship : fleet.getShips()) {
+			for (IPosition shipPos : ship.getPositions())
+				map[shipPos.getRow()][shipPos.getColumn()] = SHIP_MARKER;
+
+			if (!ship.stillFloating()) {
+				for (IPosition adjacentPos : ship.getAdjacentPositions())
+					map[adjacentPos.getRow()][adjacentPos.getColumn()] = SHIP_ADJACENT_MARKER;
+			}
+		}
+
+		if (showShots) {
+			for (IMove move : moves) {
+				for (IPosition shot : move.getShots()) {
+					if (shot.isInside()) {
+						int row = shot.getRow();
+						int col = shot.getColumn();
+
+						if (map[row][col] == SHIP_MARKER)
+							map[row][col] = SHOT_SHIP_MARKER;
+
+						if (map[row][col] == EMPTY_MARKER || map[row][col] == SHIP_ADJACENT_MARKER)
+							map[row][col] = SHOT_WATER_MARKER;
+					}
+				}
+			}
+		}
+
+		return map;
+	}
+
+
 	/**
 	 * Prints the game board by representing the positions of ships, adjacent tiles,
 	 * shots, and other game elements onto the console. The method also optionally
@@ -55,6 +98,7 @@ public class Game implements IGame
 					}
 				}
 
+
 		System.out.println();
 		System.out.print("    ");
 		for (int col = 0; col < BOARD_SIZE; col++) {
@@ -89,6 +133,17 @@ public class Game implements IGame
 		}
 		System.out.println();
 	}
+
+
+
+	public void printBothBoards(boolean showShots) {
+		char[][] myMap = buildMap(this.myFleet, this.alienMoves, showShots);
+		char[][] alienMap = buildMap(this.alienFleet, this.myMoves, showShots);
+
+		BoardWindow.show(myMap, alienMap);
+	}
+
+
 
 	/**
 	 * Serializes a list of shot positions into a JSON string. Each shot is represented
@@ -654,6 +709,7 @@ public class Game implements IGame
 	{
 		System.out.println("=== MINHA FROTA ===");
 		Game.printBoard(this.myFleet, this.alienMoves, show_shots, show_legend);
+		printBothBoards(show_shots);
 		System.out.println("=== === ===");
 
 	}
@@ -662,6 +718,7 @@ public class Game implements IGame
 	{
 		System.out.println("=== FROTA INIMIGA ===");
 		Game.printBoard(this.alienFleet, this.myMoves, show_shots, show_legend);
+		printBothBoards(show_shots);
 		System.out.println("=== === ===");
 
 	}

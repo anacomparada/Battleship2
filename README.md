@@ -9,6 +9,7 @@
 ---
 
 ## 📖 Table of Contents
+- [Group Members](#group-members)
 - [Project Overview](#-project-overview)
 - [Key Features](#-key-features)
 - [Technical Stack](#-technical-stack)
@@ -18,6 +19,16 @@
 - [Contributing](#-contributing)
 
 ---
+# Project — Group: **TP07-PL-2**
+
+## Group Members
+
+| Course | Nº | Name | Nickname |
+|---|---|---|---|
+| LIGE-PL | 123774 | Ana Comparada Reganha | anacomparada |
+| LIGE-PL | 93263 | Diogo Soares | IGE-93262, dpsoares |
+| LIGE-PL | 123762 | Rodrigo Couceiro | IGE-123762 |
+| LIGE-PL | 111561 | Tiago Bensusan | IGE-111561 | 
 
 ## 🎯 Project Overview
 This project serves as a template and reference for students learning **Object-Oriented Programming (OOP)** and **Software Quality**. It simulates a battleship environment where players must strategically place ships and sink the enemy fleet.
