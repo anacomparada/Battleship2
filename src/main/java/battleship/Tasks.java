@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
+
 /**
  * The type Tasks.
  */
@@ -32,6 +33,7 @@ public class Tasks {
 	private static final String MAPA = "mapa";
 	private static final String STATUS = "estado";
 	private static final String SIMULA = "simula";
+	private static final String GERAREPORT = "gerareport";
 
 	/**
 	 * This task also tests the fighting element of a round of three shots
@@ -120,6 +122,13 @@ public class Tasks {
 				case AJUDA:
 					menuHelp();
 					break;
+				case GERAREPORT:
+					if (game != null) {
+						PdfExporter.exportGameReport(game, "report.pdf");
+					} else {
+						System.out.println("O jogo ainda não começou. Usa o comando 'gerafrota' primeiro.");
+					}
+					break;
 				default:
 					System.out.println("Que comando é esse??? Repete ...");
 			}
@@ -142,6 +151,7 @@ public class Tasks {
 		System.out.println("- " + RAJADA + ": Realiza uma rajada de disparos.");
 		System.out.println("- " + SIMULA + ": Simula um jogo completo.");
 		System.out.println("- " + TIROS + ": Lista os tiros válidos realizados (* = tiro em navio, o = tiro na água)");
+		System.out.println("- " + GERAREPORT + ": Exporta o histórico de jogadas para um ficheiro PDF.");
 		System.out.println("- " + DESISTIR + ": Encerra o jogo.");
 		System.out.println("===============================================================");
 	}
