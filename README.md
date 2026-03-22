@@ -30,6 +30,13 @@
 | LIGE-PL | 123762 | Rodrigo Couceiro | IGE-123762 |
 | LIGE-PL | 111561 | Tiago Bensusan | IGE-111561 | 
 
+## Youtube Links
+
+### Video 1 - com issues implementados: https://www.youtube.com/watch?v=vr6FnVwU7dA
+[![Vídeo1](https://img.youtube.com/vi/vr6FnVwU7dA/0.jpg)]([https://www.youtube.com/watch?v=vr6FnVwU7dA](https://www.youtube.com/watch?v=vr6FnVwU7dA))
+### Video 2 - jogar contra LLM: https://www.youtube.com/watch?v=bzIJOWg98pI
+[![Vídeo2](https://img.youtube.com/vi/bzIJOWg98pI/0.jpg)]([https://www.youtube.com/watch?v=bzIJOWg98pI]([https://www.youtube.com/watch?v=vr6FnVwU7dA](https://www.youtube.com/watch?v=bzIJOWg98pI)))
+
 ## 🎯 Project Overview
 This project serves as a template and reference for students learning **Object-Oriented Programming (OOP)** and **Software Quality**. It simulates a battleship environment where players must strategically place ships and sink the enemy fleet.
 
