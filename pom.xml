@@ -90,6 +90,14 @@
 			<artifactId>pdfbox</artifactId>
 			<version>2.0.30</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.googlecode.lanterna</groupId>
+			<artifactId>lanterna</artifactId>
+			<version>3.1.1</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>
