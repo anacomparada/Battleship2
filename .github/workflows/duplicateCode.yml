@@ -2,6 +2,7 @@
 # Code Smell: Duplicate Code (Fowler)
 # Inspection ID: DuplicateExpressions
 
+
 name: "Code Smell - Duplicate Code"
 
 on:
