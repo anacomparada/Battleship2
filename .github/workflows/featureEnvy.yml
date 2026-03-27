@@ -1,31 +1,36 @@
 # Número de Aluno: 123774 | Nome: Ana Comparada Reganha
-name: Qodana Quality Gate - Feature Envy
+# Code Smell: Feature Envy (Fowler)
+# Métricas: ATFD >= 5, FDP >= 5, LAA < 0.33 (Lanza & Marinescu)
+
+name: "Code Smell - Feature Envy"
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  code-quality:
+  detect-feature-envy:
     runs-on: ubuntu-latest
+    name: "Detect Feature Envy (Fowler)"
+
     steps:
-      - name: Checkout do Repositório
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Executar Qodana Scan (Feature Envy / Coupling)
-        uses: JetBrains/qodana-action@v2023.3
+      - name: Run Qodana Community
+        uses: JetBrains/qodana-action@v2024.3
         with:
-          # O argumento fail-threshold a 0 garante que o Quality Gate "chumba"
-          # se detetar pelo menos 1 problema definido no qodana.yaml
-          args: --fail-threshold,0
-          
-      - name: Upload do Relatório do Qodana (Artefacto)
+          args: --config,qodana-feature-envy.yaml
+
+      - name: Upload Report
         uses: actions/upload-artifact@v4
-        if: always() # Garante que o relatório é guardado mesmo que o código chumbe no Quality Gate
+        if: always()
         with:
-          name: qodana-report
-          path: ${{ runner.temp }}/qodana/results/report
+          name: feature-envy-report
+          path: ${{ runner.temp }}/qodana/results/
+          retention-days: 14
