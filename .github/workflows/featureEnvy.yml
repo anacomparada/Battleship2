@@ -1,4 +1,11 @@
 # Número de Aluno: 123774 | Nome: Ana Comparada Reganha
+# =========================================================================
+# QUALITY GATE: FEATURE ENVY (Martin Fowler)
+# Segundo o livro "Object-Oriented Metrics in Practice" (Lanza & Marinescu),
+# este cheiro é detetado pelas métricas: ATFD >= 5, LAA < 0.33 e FDP <= 5.
+# Como o Qodana mapeia estas métricas para inspeções de acoplamento da JVM,
+# ativamos as seguintes regras para garantir o encapsulamento:
+# =========================================================================
 name: Qodana Quality Gate - Feature Envy
 
 on:
