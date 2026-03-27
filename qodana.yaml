@@ -7,7 +7,7 @@ linter: jetbrains/qodana-jvm:2025.3
 profile:
   name: qodana.recommended
   
-projectJDK: "21"
+projectJDK: "25"
   
 include:
   - name: CheckDependencyLicenses
