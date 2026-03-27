@@ -23,9 +23,6 @@ linter: jetbrains/qodana-jvm:2025.3
 # =========================================================================
 include:
   - name: FeatureEnvy
-  - name: OverlyCoupledMethod
-  - name: OverlyCoupledClass
-  - name: LawOfDemeter
 
 # =========================================================================
 # LIMIARES (THRESHOLDS)
