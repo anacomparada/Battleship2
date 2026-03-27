@@ -1,0 +1,41 @@
+# Número de aluno: [SEU_NUMERO] - [SEU_NOME]
+# Code Smell: Long Parameter List (Fowler)
+# Inspection ID: ParametersPerMethod
+# Threshold: NOPM >= 4 (parameterLimit: 3)
+
+name: "Code Smell - Long Parameter List"
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:    # permite correr manualmente no GitHub
+
+jobs:
+  detect-long-parameter-list:
+    runs-on: ubuntu-latest
+    name: "Detect Long Parameter List (Fowler)"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Qodana - Long Parameter List
+        uses: JetBrains/qodana-action@v2024.3
+        with:
+          config-path: qodana-long-parameter-list.yaml   # usa o teu yaml específico
+          args: --property,idea.headless.enable.statistics=false
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+
+      - name: Upload Report as Artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: long-parameter-list-report
+          path: ${{ runner.temp }}/qodana/results/
+          retention-days: 14
+

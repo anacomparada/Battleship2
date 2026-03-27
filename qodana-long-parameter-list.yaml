@@ -1,0 +1,27 @@
+#-------------------------------------------------------------------------------#
+#   Qodana config - Long Parameter List Detection                               #
+#   Code Smell: Long Parameter List (Fowler)                                    #
+#   Inspection ID: ParametersPerMethod                                          #
+#   Metric: NOPM >= 4 (Lanza & Marinescu, OO Metrics in Practice)              #
+#-------------------------------------------------------------------------------#
+
+version: "1.0"
+
+profile:
+  name: qodana.starter
+
+# Ativa APENAS a inspeção do Long Parameter List
+include:
+  - name: ParametersPerMethod
+
+# Desativa tudo o resto para focar só neste smell
+exclude:
+  - name: All
+
+projectJDK: "25"
+
+linter: jetbrains/qodana-jvm:2025.3
+
+failureConditions:
+  severityThresholds:
+    any: 1   # Falha se encontrar pelo menos 1 instância
