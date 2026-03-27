@@ -1,0 +1,31 @@
+# Número de Aluno: 123774 | Nome: Ana Comparada Reganha
+name: Qodana Quality Gate - Feature Envy
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do Repositório
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Executar Qodana Scan (Feature Envy / Coupling)
+        uses: JetBrains/qodana-action@v2023.3
+        with:
+          # O argumento fail-threshold a 0 garante que o Quality Gate "chumba"
+          # se detetar pelo menos 1 problema de Feature Envy definido no qodana.yaml
+          args: --fail-threshold,0
+          
+      - name: Upload do Relatório do Qodana (Artefacto)
+        uses: actions/upload-artifact@v4
+        if: always() # Garante que o relatório é guardado mesmo que o código chumbe no Quality Gate
+        with:
+          name: qodana-report
+          path: ${{ runner.temp }}/qodana/results/report
