@@ -1,33 +1,48 @@
-# Número de Aluno: 123762  || Nome: Rodrigo Emnanuel dos Santos Couceiro
-name: Qodana Code Analysis - Duplicate Code
+# Número de Aluno: 123762  || Nome: Rodrigo Emanuel dos Santos Couceiro
+# Code Smell: Duplicate Code (Fowler)
+# Inspection ID: DuplicateExpressions
+
+
+name: "Code Smell - Duplicate Code"
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  checks: write
 
 jobs:
-  qodana:
+  detect-duplicate-code:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      checks: write
-      pull-requests: write
+    name: "Detect Duplicate Code (Fowler)"
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
 
-      - name: Run Qodana
+      - name: Run Qodana Scan
         uses: JetBrains/qodana-action@v2025.3
         with:
-          linter: jetbrains/qodana-jvm:2025.3
-          cache-default-branch-only: true
+          pr-mode: false
+          args: --config,qodana-duplicate-code.yaml,--save-report
 
-      - name: Upload Qodana results
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+          QODANA_ENDPOINT: 'https://qodana.cloud'
+
+      - name: Upload Report
         uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: qodana-report
-          path: qodana-report
+          name: duplicate-code-report
+          path: ${{ runner.temp }}/qodana/results/
+          retention-days: 14
