@@ -1,7 +1,7 @@
-# Número de Aluno: 123762  || Nome: Rodrigo Emanuel dos Santos Couceiro
+# Número de Aluno: 123762 || Nome: Rodrigo Emanuel dos Santos Couceiro
 # Code Smell: Duplicate Code (Fowler)
-# Inspection ID: DuplicateExpressions
-
+# Inspection ID: DuplicatedCode
+# Metric: Significant Duplication (Lanza & Marinescu, OO Metrics in Practice)
 
 name: "Code Smell - Duplicate Code"
 
@@ -26,15 +26,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
+          fetch-depth: 0             # ← remove o ref: problemático
+
+      - name: Setup Java 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'oracle'
+          java-version: '25'
 
       - name: Run Qodana Scan
         uses: JetBrains/qodana-action@v2025.3
         with:
           pr-mode: false
-          args: --config,qodana-duplicate-code.yaml,--save-report
-
+          args: --save-report        # ← sem --config, usa qodana.yaml
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_2026785207 }}
           QODANA_ENDPOINT: 'https://qodana.cloud'
@@ -46,3 +50,4 @@ jobs:
           name: duplicate-code-report
           path: ${{ runner.temp }}/qodana/results/
           retention-days: 14
+ 
