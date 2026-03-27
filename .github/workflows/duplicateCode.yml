@@ -1,4 +1,4 @@
-name: Qodana Code Analysis
+name: Qodana Code Analysis - Duplicate Code
 
 on:
   push:
