@@ -28,11 +28,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup Java 25        # ← NOVO - instala o JDK 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'oracle'
+          java-version: '25'
+
       - name: Run Qodana Scan
         uses: JetBrains/qodana-action@v2025.3
         with:
           pr-mode: false
-          args: --save-report      # ← sem --config, usa o qodana.yaml por defeito
+          args: --save-report
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_2026785207 }}
           QODANA_ENDPOINT: 'https://qodana.cloud'
