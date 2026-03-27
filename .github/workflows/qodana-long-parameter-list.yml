@@ -26,16 +26,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
 
       - name: Run Qodana Scan
         uses: JetBrains/qodana-action@v2025.3
         with:
           pr-mode: false
-          args: --config,qodana-long-parameter-list.yaml,--save-report
+          args: --config qodana-long-parameter-list.yaml --save-report
         env:
-          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_2026785207 }}
           QODANA_ENDPOINT: 'https://qodana.cloud'
 
       - name: Upload Report
