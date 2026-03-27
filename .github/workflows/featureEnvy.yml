@@ -1,11 +1,4 @@
 # Número de Aluno: 123774 | Nome: Ana Comparada Reganha
-# =========================================================================
-# QUALITY GATE: FEATURE ENVY (Martin Fowler)
-# Segundo o livro "Object-Oriented Metrics in Practice" (Lanza & Marinescu),
-# este cheiro é detetado pelas métricas: ATFD >= 5, LAA < 0.33 e FDP <= 5.
-# Como o Qodana mapeia estas métricas para inspeções de acoplamento da JVM,
-# ativamos as seguintes regras para garantir o encapsulamento:
-# =========================================================================
 name: Qodana Quality Gate - Feature Envy
 
 on:
@@ -27,7 +20,7 @@ jobs:
         uses: JetBrains/qodana-action@v2023.3
         with:
           # O argumento fail-threshold a 0 garante que o Quality Gate "chumba"
-          # se detetar pelo menos 1 problema de Feature Envy definido no qodana.yaml
+          # se detetar pelo menos 1 problema definido no qodana.yaml
           args: --fail-threshold,0
           
       - name: Upload do Relatório do Qodana (Artefacto)
