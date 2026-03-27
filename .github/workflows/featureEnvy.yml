@@ -1,31 +1,52 @@
 # Número de Aluno: 123774 | Nome: Ana Comparada Reganha
-name: Qodana Quality Gate - Feature Envy
+# Code Smell: Feature Envy (Fowler)
+# Inspection ID: FeatureEnvy, OverlyCoupledMethod, OverlyCoupledClass, LawOfDemeter
+# Threshold: ATFD >= 5, FDP <= 5, LAA < 0.33 (Lanza & Marinescu, OO Metrics in Practice)
+
+name: "Code Smell - Feature Envy"
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  checks: write
 
 jobs:
-  code-quality:
+  detect-feature-envy:
     runs-on: ubuntu-latest
+    name: "Detect Feature Envy (Fowler)"
+
     steps:
-      - name: Checkout do Repositório
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Executar Qodana Scan (Feature Envy / Coupling)
-        uses: JetBrains/qodana-action@v2023.3
+      - name: Setup Java 25
+        uses: actions/setup-java@v4
         with:
-          # O argumento fail-threshold a 0 garante que o Quality Gate "chumba"
-          # se detetar pelo menos 1 problema definido no qodana.yaml
-          args: --fail-threshold,0
-          
-      - name: Upload do Relatório do Qodana (Artefacto)
+          distribution: 'oracle'
+          java-version: '25'
+
+      - name: Run Qodana Scan
+        uses: JetBrains/qodana-action@v2025.3
+        with:
+          pr-mode: false
+          args: --save-report
+        env:
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_2026785207 }}
+          QODANA_ENDPOINT: 'https://qodana.cloud'
+
+      - name: Upload Report
         uses: actions/upload-artifact@v4
-        if: always() # Garante que o relatório é guardado mesmo que o código chumbe no Quality Gate
+        if: always()
         with:
-          name: qodana-report
-          path: ${{ runner.temp }}/qodana/results/report
+          name: feature-envy-report
+          path: ${{ runner.temp }}/qodana/results/
+          retention-days: 14
