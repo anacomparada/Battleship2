@@ -32,7 +32,7 @@ jobs:
         uses: JetBrains/qodana-action@v2025.3
         with:
           pr-mode: false
-          args: --config qodana-long-parameter-list.yaml --save-report
+          args: --save-report      # ← sem --config, usa o qodana.yaml por defeito
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_2026785207 }}
           QODANA_ENDPOINT: 'https://qodana.cloud'
