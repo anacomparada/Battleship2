@@ -1,4 +1,5 @@
-name: Qodana Code Analysis
+# Número de Aluno: 123762  || Nome: Rodrigo Emnanuel dos Santos Couceiro
+name: Qodana Code Analysis - Duplicate Code
 
 on:
   push:
