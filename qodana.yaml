@@ -6,8 +6,15 @@ version: "1.0"
 linter: jetbrains/qodana-jvm:2025.3
 profile:
   name: qodana.recommended
+  
+projectJDK: "21"
+  
 include:
   - name: CheckDependencyLicenses
   - name: DuplicationExpressions    # ← Duplacation Expression - 123762 Rodrigo Couceiro
   - name: ParametersPerMethod       # ← Long Parameter List - 93263 Diogo Soares
   - name: FeatureEnvy               # ← Feature Envy - 123774 Ana Reganha
+
+failureConditions:   
+  severityThresholds:     
+    any: 1
