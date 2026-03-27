@@ -1,9 +1,8 @@
-#-------------------------------------------------------------------------------#
-#   Qodana config - Long Parameter List Detection                               #
-#   Code Smell: Long Parameter List (Fowler)                                    #
-#   Inspection ID: ParametersPerMethod                                          #
-#   Metric: NOPM >= 4 (Lanza & Marinescu, OO Metrics in Practice)              #
-#-------------------------------------------------------------------------------#
+# Número de aluno: [SEU_NUMERO] - [SEU_NOME]
+# Code Smell: Long Parameter List (Fowler)
+# Inspection ID: ParametersPerMethod
+# Threshold: NOPM >= 4 (Lanza & Marinescu, OO Metrics in Practice)
+
 version: "1.0"
 
 profile:
@@ -22,8 +21,4 @@ linter: jetbrains/qodana-jvm-community:2024.3
 failureConditions:
   severityThresholds:
     any: 1
-  ```
 
-A diferença chave é esta linha:
-  ```
-linter: jetbrains/qodana-jvm-community:2024.3
