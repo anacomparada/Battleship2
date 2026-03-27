@@ -33,7 +33,7 @@ jobs:
         uses: JetBrains/qodana-action@v2025.3
         with:
           pr-mode: false
-          args: --config,qodana-duplicate-code.yaml.yaml,--save-report
+          args: --config,qodana-duplicate-code.yaml,--save-report
 
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_2026785207 }}
