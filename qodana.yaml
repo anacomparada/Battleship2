@@ -11,7 +11,7 @@ projectJDK: "25"
   
 include:
   - name: CheckDependencyLicenses
-  - name: DuplicationExpressions    # ← Duplacation Expression - 123762 Rodrigo Couceiro
+  - name: DuplicateExpressions    # ← Duplacation Expression - 123762 Rodrigo Couceiro
   - name: ParametersPerMethod       # ← Long Parameter List - 93263 Diogo Soares
   - name: FeatureEnvy               # ← Feature Envy - 123774 Ana Reganha
 
