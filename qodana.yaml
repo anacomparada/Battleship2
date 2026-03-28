@@ -15,6 +15,9 @@ include:
   - name: ParametersPerMethod       # ← Long Parameter List - 93263 Diogo Soares
   - name: FeatureEnvy               # ← Feature Envy - 123774 Ana Reganha
 
+exclude:
+  - name: All                    # ← desativa tudo o resto, corre só os do include
+
 failureConditions:   
   severityThresholds:     
     any: 1
