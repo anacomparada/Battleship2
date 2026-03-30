@@ -43,7 +43,7 @@ jobs:
         uses: JetBrains/qodana-action@v2025.3
         with:
           pr-mode: false
-          args: --save-report,--profile-name,Brain Method Profile
+          args: --save-report,--profile-name,.idea/inspectionProfiles/Brain_Method_Profile.xml
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_2026785207 }}
           QODANA_ENDPOINT: 'https://qodana.cloud'
