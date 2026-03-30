@@ -14,7 +14,15 @@ include:
   - name: DuplicatedCode            # ← Duplacation Code - 123762 Rodrigo Couceiro
   - name: ParametersPerMethod       # ← Long Parameter List - 93263 Diogo Soares
   - name: FeatureEnvy               # ← Feature Envy - 123774 Ana Reganha
-  - name: LongMethod               # ← LongMethod (Usando Brain Method) - 111561 Tiago Bensusan
+
+  # Brain Method - 111561 Tiago Bensusan
+  #  BrainMethod aproximado utilizando inspections definidas pela extensão CodeMetrics - (CC >= 3 && LOC >= 30 && MND >= 3) 
+  # Nota: Não é usado o NOAV (Number of accessed variables) pois  não existe uma inspection nativa para esta métrica
+  # Inspections nativas ao qodana a serem usadas para  LOC, CC e MND respetivamente
+  - name: OverlyLongMethod               # ← LongMethod -> LOC
+  - name: OverlyComplexMethod               # ← ComplexMethod -> CC
+  - name: OverlyNestedMethod               # ← NestedDepth -> MND
+
 exclude:
   - name: All                    # ← desativa tudo o resto, corre só os do include
 
