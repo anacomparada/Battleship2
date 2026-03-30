@@ -1,15 +1,19 @@
 <component name="InspectionProjectProfileManager">
     <profile version="1.0">
         <option name="myName" value="Brain Method Profile" />
-
+        <!-- Desativa tudo por defeito -->
+        <option name="myDeactivatedInspections">
+            <set>
+                <option value="ALL" />
+            </set>
+        </option>
+        <!-- Ativa apenas as inspections de Brain Method -->
         <inspection_tool class="CyclomaticComplexity" enabled="true" level="WARNING" enabled_by_default="true">
             <option name="m_limit" value="3" />
         </inspection_tool>
-
         <inspection_tool class="NestingDepth" enabled="true" level="WARNING" enabled_by_default="true">
             <option name="m_limit" value="3" />
         </inspection_tool>
-
         <inspection_tool class="NonCommentSourceStatements" enabled="true" level="WARNING" enabled_by_default="true">
             <option name="m_limit" value="30" />
         </inspection_tool>
