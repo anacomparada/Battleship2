@@ -1,0 +1,16 @@
+version: "1.0"
+linter: jetbrains/qodana-jvm:2025.3
+profile:
+  path: .idea/inspectionProfiles/Brain_Method_Profile.xml
+
+projectJDK: "25"
+
+include:
+  - name: CyclomaticComplexity
+  - name: NestingDepth
+  - name: NonCommentSourceStatements
+exclude:
+  - name: All
+failureConditions:
+  severityThresholds:
+    any: 1 
