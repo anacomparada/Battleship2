@@ -4,8 +4,6 @@
 # - OverlyLongMethod
 # - OverlyComplexMethod
 # - OverlyNestedMethod
-# Limites através de inspection profile (.idea/inspectionProfiles/Brain_Method_Profile.xml):
-# CC >= 3, LOC/NCSS >= 30, MND >= 3
 # Nota: NOAV não é usado, não existe inspection nativa para o mesmo
 
 name: "Code Smell - Brain Method"
