@@ -19,9 +19,10 @@ include:
   #  BrainMethod aproximado utilizando inspections definidas pela extensão CodeMetrics - (CC >= 3 && LOC >= 30 && MND >= 3) 
   # Nota: Não é usado o NOAV (Number of accessed variables) pois  não existe uma inspection nativa para esta métrica
   # Inspections nativas ao qodana a serem usadas para  LOC, CC e MND respetivamente
-  - name: OverlyLongMethod               # ← LongMethod -> LOC
-  - name: OverlyComplexMethod               # ← ComplexMethod -> CC
-  - name: OverlyNestedMethod               # ← NestedDepth -> MND
+       
+  - name: CyclomaticComplexity  # ← ComplexMethod -> CC
+  - name: NestingDepth # ← NestedDepth -> MND
+  - name: NonCommentSourceStatements # ← LongMethod -> LOC
 
 exclude:
   - name: All                    # ← desativa tudo o resto, corre só os do include
