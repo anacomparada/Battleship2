@@ -1,0 +1,25 @@
+name: "Brain Method Profile"
+baseProfile: empty
+
+groups:
+  - groupId: BrainMethodInspections
+    inspections:
+      - CyclomaticComplexity
+      - NestingDepth
+      - NonCommentSourceStatements
+
+inspections:
+  - group: ALL
+    enabled: false
+  - group: BrainMethodInspections
+    enabled: true
+    severity: WARNING
+  - inspection: CyclomaticComplexity
+    options:
+      m_limit: 3
+  - inspection: NestingDepth
+    options:
+      m_limit: 3
+  - inspection: NonCommentSourceStatements
+    options:
+      m_limit: 30
