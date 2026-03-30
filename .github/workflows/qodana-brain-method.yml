@@ -37,7 +37,7 @@ jobs:
         uses: JetBrains/qodana-action@v2025.3
         with:
           pr-mode: false
-          args: --save-report --config qodana-brain-method.yaml
+          args: --save-report
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_2026785207 }}
           QODANA_ENDPOINT: 'https://qodana.cloud'
