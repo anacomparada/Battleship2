@@ -14,7 +14,7 @@ include:
   - name: DuplicatedCode            # ← Duplacation Code - 123762 Rodrigo Couceiro
   - name: ParametersPerMethod       # ← Long Parameter List - 93263 Diogo Soares
   - name: FeatureEnvy               # ← Feature Envy - 123774 Ana Reganha
-  - name : LongMethod               # ← LongMethod (Usando Brain Method) - 111561 Tiago Bensusan
+  - name: LongMethod               # ← LongMethod (Usando Brain Method) - 111561 Tiago Bensusan
 exclude:
   - name: All                    # ← desativa tudo o resto, corre só os do include
 
