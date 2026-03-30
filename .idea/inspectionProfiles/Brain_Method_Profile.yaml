@@ -23,3 +23,7 @@ inspections:
   - inspection: NonCommentSourceStatements
     options:
       m_limit: 30
+  - inspection: FeatureEnvy
+    enabled: false
+  - inspection: DuplicatedCode
+    enabled: false
