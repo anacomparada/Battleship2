@@ -26,7 +26,3 @@ include:
 
 exclude:
   - name: All                    # ← desativa tudo o resto, corre só os do include
-
-failureConditions:   
-  severityThresholds:     
-    any: 1
