@@ -1,0 +1,298 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Scoreboard</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">battleship</a>
+</div>
+
+<h1>Coverage Summary for Class: Scoreboard (battleship)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Scoreboard</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/52)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Scoreboard$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/53)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package battleship;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.core.type.TypeReference;
+&nbsp;import com.fasterxml.jackson.databind.ObjectMapper;
+&nbsp;import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+&nbsp;import com.github.freva.asciitable.AsciiTable;
+&nbsp;import com.github.freva.asciitable.Column;
+&nbsp;
+&nbsp;import java.io.File;
+&nbsp;import java.io.IOException;
+&nbsp;import java.time.format.DateTimeFormatter;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Arrays;
+&nbsp;import java.util.Comparator;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Scanner;
+&nbsp;
+&nbsp;/**
+&nbsp; * Manages the Battleship Hall of Fame / Scoreboard.
+&nbsp; *
+&nbsp; * &lt;p&gt;Results are persisted as JSON in {@code data/scoreboard.json}.
+&nbsp; * The class exposes methods to save new results, display the scoreboard
+&nbsp; * (sorted by score or by date), and interactively ask the user how to sort.
+&nbsp; *
+&nbsp; * &lt;p&gt;Sort modes:
+&nbsp; * &lt;ul&gt;
+&nbsp; *   &lt;li&gt;1 – by score (fewest moves = best, wins before losses)&lt;/li&gt;
+&nbsp; *   &lt;li&gt;2 – by date  (most recent first)&lt;/li&gt;
+&nbsp; * &lt;/ul&gt;
+&nbsp; */
+<b class="nc">&nbsp;public class Scoreboard {</b>
+&nbsp;
+&nbsp;    // ── Constants ─────────────────────────────────────────────────────────────
+&nbsp;
+&nbsp;    private static final String FILE_PATH = &quot;data/scoreboard.json&quot;;
+&nbsp;    private static final String DATE_PATTERN = &quot;dd/MM/yyyy HH:mm&quot;;
+&nbsp;
+<b class="nc">&nbsp;    private static final ObjectMapper MAPPER =</b>
+<b class="nc">&nbsp;            new ObjectMapper().registerModule(new JavaTimeModule());</b>
+&nbsp;
+&nbsp;    // ── Public API ────────────────────────────────────────────────────────────
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Persists a new game result to the scoreboard file.
+&nbsp;     *
+&nbsp;     * @param result the {@link GameResult} to save
+&nbsp;     */
+&nbsp;    public static void saveResult(GameResult result) {
+<b class="nc">&nbsp;        List&lt;GameResult&gt; results = loadResults();</b>
+<b class="nc">&nbsp;        results.add(result);</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            File file = new File(FILE_PATH);</b>
+<b class="nc">&nbsp;            file.getParentFile().mkdirs();</b>
+<b class="nc">&nbsp;            MAPPER.writerWithDefaultPrettyPrinter().writeValue(file, results);</b>
+<b class="nc">&nbsp;            System.out.println(&quot;\n[Scoreboard] Resultado guardado com sucesso!&quot;);</b>
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            System.err.println(&quot;Erro ao guardar o resultado: &quot; + e.getMessage());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Displays the scoreboard sorted by the given criterion.
+&nbsp;     *
+&nbsp;     * @param sortBy 1 = por pontuação (jogadas), 2 = por data
+&nbsp;     */
+&nbsp;    public static void displayScoreboard(int sortBy) {
+<b class="nc">&nbsp;        List&lt;GameResult&gt; results = loadResults();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (results.isEmpty()) {</b>
+<b class="nc">&nbsp;            System.out.println(&quot;\nO Hall of Fame está vazio. Joga uma partida para entrar na história!\n&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+&nbsp;        // ── Sort ────────────────────────────────────────────────────────────
+<b class="nc">&nbsp;        if (sortBy == 1) {</b>
+&nbsp;            // Wins first; then fewest moves is best
+<b class="nc">&nbsp;            results.sort(Comparator</b>
+<b class="nc">&nbsp;                    .comparing(GameResult::isPlayerWon).reversed()</b>
+<b class="nc">&nbsp;                    .thenComparingInt(GameResult::getTotalMoves));</b>
+&nbsp;        } else {
+&nbsp;            // Most recent first
+<b class="nc">&nbsp;            results.sort((a, b) -&gt; b.getDate().compareTo(a.getDate()));</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        DateTimeFormatter fmt = DateTimeFormatter.ofPattern(DATE_PATTERN);</b>
+&nbsp;
+&nbsp;        // ── Render ──────────────────────────────────────────────────────────
+<b class="nc">&nbsp;        String sortLabel = (sortBy == 1) ? &quot;pontuação&quot; : &quot;data&quot;;</b>
+<b class="nc">&nbsp;        System.out.println(&quot;\n╔══════════════════════════════════════╗&quot;);</b>
+<b class="nc">&nbsp;        System.out.println(&quot;║         ⚓  HALL OF FAME  ⚓          ║&quot;);</b>
+<b class="nc">&nbsp;        System.out.println(&quot;╚══════════════════════════════════════╝&quot;);</b>
+<b class="nc">&nbsp;        System.out.println(&quot;  Ordenado por: &quot; + sortLabel);</b>
+<b class="nc">&nbsp;        System.out.println();</b>
+&nbsp;
+<b class="nc">&nbsp;        String table = AsciiTable.getTable(results, Arrays.asList(</b>
+<b class="nc">&nbsp;                new Column().header(&quot;#&quot;)</b>
+<b class="nc">&nbsp;                            .with(r -&gt; String.valueOf(results.indexOf(r) + 1)),</b>
+<b class="nc">&nbsp;                new Column().header(&quot;Jogador&quot;)</b>
+<b class="nc">&nbsp;                            .with(GameResult::getPlayerName),</b>
+<b class="nc">&nbsp;                new Column().header(&quot;Resultado&quot;)</b>
+<b class="nc">&nbsp;                            .with(r -&gt; r.isPlayerWon() ? &quot;VITÓRIA&quot; : &quot;DERROTA&quot;),</b>
+<b class="nc">&nbsp;                new Column().header(&quot;Jogadas&quot;)</b>
+<b class="nc">&nbsp;                            .with(r -&gt; String.valueOf(r.getTotalMoves())),</b>
+<b class="nc">&nbsp;                new Column().header(&quot;Data&quot;)</b>
+<b class="nc">&nbsp;                            .with(r -&gt; r.getDate().format(fmt))</b>
+&nbsp;        ));
+&nbsp;
+<b class="nc">&nbsp;        System.out.println(table);</b>
+<b class="nc">&nbsp;        System.out.println();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Interactive scoreboard prompt: asks the user how to sort and displays the table.
+&nbsp;     *
+&nbsp;     * @param in the active {@link Scanner}
+&nbsp;     */
+&nbsp;    public static void interactiveDisplay(Scanner in) {
+<b class="nc">&nbsp;        System.out.println(&quot;\nOrdenar o Hall of Fame por:&quot;);</b>
+<b class="nc">&nbsp;        System.out.println(&quot;  1 - Pontuação (vitórias primeiro, depois menos jogadas)&quot;);</b>
+<b class="nc">&nbsp;        System.out.println(&quot;  2 - Data (mais recente primeiro)&quot;);</b>
+<b class="nc">&nbsp;        System.out.print(&quot;Escolha (1 ou 2): &quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        int choice = 1;</b>
+<b class="nc">&nbsp;        if (in.hasNextInt()) {</b>
+<b class="nc">&nbsp;            int v = in.nextInt();</b>
+<b class="nc">&nbsp;            if (v == 2) choice = 2;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        displayScoreboard(choice);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // ── Private helpers ───────────────────────────────────────────────────────
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Loads all saved results from the JSON file.
+&nbsp;     *
+&nbsp;     * @return list of {@link GameResult}, empty if the file doesn&#39;t exist or fails to parse
+&nbsp;     */
+&nbsp;    private static List&lt;GameResult&gt; loadResults() {
+<b class="nc">&nbsp;        File file = new File(FILE_PATH);</b>
+<b class="nc">&nbsp;        if (!file.exists()) return new ArrayList&lt;&gt;();</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            return MAPPER.readValue(file, new TypeReference&lt;List&lt;GameResult&gt;&gt;() {});</b>
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            System.err.println(&quot;Erro ao ler os resultados: &quot; + e.getMessage());</b>
+<b class="nc">&nbsp;            return new ArrayList&lt;&gt;();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-25 02:56</div>
+</div>
+</body>
+</html>

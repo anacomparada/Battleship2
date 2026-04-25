@@ -1,0 +1,322 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PdfExporter</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">battleship</a>
+</div>
+
+<h1>Coverage Summary for Class: PdfExporter (battleship)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PdfExporter</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/84)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">PdfExporter$PdfState</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/88)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package battleship;
+&nbsp;
+&nbsp;import org.apache.pdfbox.pdmodel.PDDocument;
+&nbsp;import org.apache.pdfbox.pdmodel.PDPage;
+&nbsp;import org.apache.pdfbox.pdmodel.PDPageContentStream;
+&nbsp;import org.apache.pdfbox.pdmodel.font.PDType1Font;
+&nbsp;
+&nbsp;import java.awt.Color;
+&nbsp;import java.io.IOException;
+&nbsp;import java.util.List;
+&nbsp;
+<b class="nc">&nbsp;public class PdfExporter {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Classe interna auxiliar para guardar o estado da página e da posição Y
+&nbsp;     * enquanto mudamos de página dinamicamente.
+&nbsp;     */
+&nbsp;    private static class PdfState {
+&nbsp;        PDPage page;
+&nbsp;        PDPageContentStream contentStream;
+&nbsp;        float y;
+&nbsp;
+<b class="nc">&nbsp;        PdfState(PDPage page, PDPageContentStream contentStream, float y) {</b>
+<b class="nc">&nbsp;            this.page = page;</b>
+<b class="nc">&nbsp;            this.contentStream = contentStream;</b>
+<b class="nc">&nbsp;            this.y = y;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public static void exportGameReport(IGame game, String filePath) {
+<b class="nc">&nbsp;        try (PDDocument document = new PDDocument()) {</b>
+<b class="nc">&nbsp;            PDPage page = new PDPage();</b>
+<b class="nc">&nbsp;            document.addPage(page);</b>
+<b class="nc">&nbsp;            PDPageContentStream contentStream = new PDPageContentStream(document, page);</b>
+&nbsp;
+<b class="nc">&nbsp;            float yPosition = 750;</b>
+&nbsp;
+&nbsp;            // --- CABEÇALHO DO DOCUMENTO ---
+<b class="nc">&nbsp;            contentStream.setLineWidth(1.5f);</b>
+<b class="nc">&nbsp;            contentStream.setStrokingColor(Color.DARK_GRAY);</b>
+<b class="nc">&nbsp;            contentStream.moveTo(50, yPosition - 20);</b>
+<b class="nc">&nbsp;            contentStream.lineTo(550, yPosition - 20);</b>
+<b class="nc">&nbsp;            contentStream.stroke();</b>
+&nbsp;
+<b class="nc">&nbsp;            contentStream.beginText();</b>
+<b class="nc">&nbsp;            contentStream.setFont(PDType1Font.HELVETICA_BOLD, 18);</b>
+<b class="nc">&nbsp;            contentStream.setNonStrokingColor(new Color(0, 51, 102));</b>
+<b class="nc">&nbsp;            contentStream.newLineAtOffset(50, yPosition);</b>
+<b class="nc">&nbsp;            contentStream.showText(&quot;Relatório Oficial - Batalha Naval&quot;);</b>
+<b class="nc">&nbsp;            contentStream.endText();</b>
+&nbsp;
+<b class="nc">&nbsp;            yPosition -= 50;</b>
+&nbsp;
+&nbsp;            // Criamos o nosso objeto de estado para gerir a paginação facilmente
+<b class="nc">&nbsp;            PdfState state = new PdfState(page, contentStream, yPosition);</b>
+&nbsp;
+&nbsp;            // --- 1. AS MINHAS JOGADAS ---
+<b class="nc">&nbsp;            printMoveSection(document, state, &quot;As Minhas Rajadas (Ataques ao PC)&quot;, game.getMyMoves());</b>
+&nbsp;
+<b class="nc">&nbsp;            state.y -= 20; // Espaço extra entre as secções</b>
+&nbsp;
+&nbsp;            // --- 2. JOGADAS DO INIMIGO ---
+<b class="nc">&nbsp;            printMoveSection(document, state, &quot;Histórico de Rajadas (Inimigo / PC)&quot;, game.getAlienMoves());</b>
+&nbsp;
+&nbsp;            // Fechar a stream final e guardar
+<b class="nc">&nbsp;            state.contentStream.close();</b>
+<b class="nc">&nbsp;            document.save(filePath);</b>
+&nbsp;
+<b class="nc">&nbsp;            System.out.println(&quot;Sucesso! O relatório detalhado de AMBOS os jogadores foi guardado em: &quot; + filePath);</b>
+&nbsp;
+&nbsp;        } catch (IOException e) {
+<b class="nc">&nbsp;            System.err.println(&quot;Ocorreu um erro ao gerar o PDF: &quot; + e.getMessage());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Método auxiliar que processa qualquer lista de jogadas, aplicando cores e gerindo
+&nbsp;     * a criação de novas páginas automaticamente quando o texto chega ao fundo.
+&nbsp;     */
+&nbsp;    private static void printMoveSection(PDDocument document, PdfState state, String title, List&lt;IMove&gt; moves) throws IOException {
+&nbsp;
+&nbsp;        // Verifica se precisamos de uma página nova antes de imprimir o título
+<b class="nc">&nbsp;        checkPagination(document, state, 100);</b>
+&nbsp;
+&nbsp;        // Título da Secção
+<b class="nc">&nbsp;        state.contentStream.beginText();</b>
+<b class="nc">&nbsp;        state.contentStream.setFont(PDType1Font.HELVETICA_BOLD, 14);</b>
+<b class="nc">&nbsp;        state.contentStream.setNonStrokingColor(Color.BLACK);</b>
+<b class="nc">&nbsp;        state.contentStream.newLineAtOffset(50, state.y);</b>
+<b class="nc">&nbsp;        state.contentStream.showText(title);</b>
+<b class="nc">&nbsp;        state.contentStream.endText();</b>
+<b class="nc">&nbsp;        state.y -= 25;</b>
+&nbsp;
+<b class="nc">&nbsp;        if (moves == null || moves.isEmpty()) {</b>
+<b class="nc">&nbsp;            state.contentStream.beginText();</b>
+<b class="nc">&nbsp;            state.contentStream.setFont(PDType1Font.HELVETICA, 12);</b>
+<b class="nc">&nbsp;            state.contentStream.newLineAtOffset(50, state.y);</b>
+<b class="nc">&nbsp;            state.contentStream.showText(&quot;Nenhuma jogada registada nesta categoria.&quot;);</b>
+<b class="nc">&nbsp;            state.contentStream.endText();</b>
+<b class="nc">&nbsp;            state.y -= 25;</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+&nbsp;        // Listar as Rajadas
+<b class="nc">&nbsp;        for (IMove move : moves) {</b>
+<b class="nc">&nbsp;            checkPagination(document, state, 100);</b>
+&nbsp;
+<b class="nc">&nbsp;            state.contentStream.beginText();</b>
+<b class="nc">&nbsp;            state.contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12);</b>
+<b class="nc">&nbsp;            state.contentStream.setNonStrokingColor(Color.DARK_GRAY);</b>
+<b class="nc">&nbsp;            state.contentStream.newLineAtOffset(50, state.y);</b>
+<b class="nc">&nbsp;            state.contentStream.showText(&quot;Rajada nº &quot; + move.getNumber());</b>
+<b class="nc">&nbsp;            state.contentStream.endText();</b>
+<b class="nc">&nbsp;            state.y -= 15;</b>
+&nbsp;
+<b class="nc">&nbsp;            List&lt;IPosition&gt; shots = move.getShots();</b>
+<b class="nc">&nbsp;            List&lt;IGame.ShotResult&gt; results = move.getShotResults();</b>
+&nbsp;
+&nbsp;            // Listar cada tiro da rajada
+<b class="nc">&nbsp;            for (int i = 0; i &lt; shots.size(); i++) {</b>
+<b class="nc">&nbsp;                checkPagination(document, state, 50);</b>
+&nbsp;
+<b class="nc">&nbsp;                IPosition pos = shots.get(i);</b>
+<b class="nc">&nbsp;                IGame.ShotResult res = results.get(i);</b>
+&nbsp;
+&nbsp;                String outcome;
+&nbsp;                Color textColor;
+&nbsp;
+&nbsp;                // Lógica de Cores e Resultados
+<b class="nc">&nbsp;                if (!res.valid()) {</b>
+<b class="nc">&nbsp;                    outcome = &quot;Fora do limite&quot;;</b>
+<b class="nc">&nbsp;                    textColor = Color.LIGHT_GRAY;</b>
+<b class="nc">&nbsp;                } else if (res.repeated()) {</b>
+<b class="nc">&nbsp;                    outcome = &quot;Tiro repetido&quot;;</b>
+<b class="nc">&nbsp;                    textColor = Color.ORANGE;</b>
+<b class="nc">&nbsp;                } else if (res.ship() == null) {</b>
+<b class="nc">&nbsp;                    outcome = &quot;Água&quot;;</b>
+<b class="nc">&nbsp;                    textColor = new Color(0, 102, 204); // Azul Água</b>
+<b class="nc">&nbsp;                } else if (res.sunk()) {</b>
+<b class="nc">&nbsp;                    outcome = &quot;AFUNDOU: &quot; + res.ship().getCategory().toUpperCase() + &quot;!&quot;;</b>
+<b class="nc">&nbsp;                    textColor = Color.RED;</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    outcome = &quot;Acertou em: &quot; + res.ship().getCategory();</b>
+<b class="nc">&nbsp;                    textColor = new Color(153, 0, 0); // Vermelho Escuro</b>
+&nbsp;                }
+&nbsp;
+<b class="nc">&nbsp;                state.contentStream.beginText();</b>
+<b class="nc">&nbsp;                state.contentStream.setFont(PDType1Font.HELVETICA, 11);</b>
+<b class="nc">&nbsp;                state.contentStream.setNonStrokingColor(textColor);</b>
+<b class="nc">&nbsp;                state.contentStream.newLineAtOffset(70, state.y); // Indentação de 70 para ficar alinhado à frente</b>
+<b class="nc">&nbsp;                state.contentStream.showText(&quot;-&gt; Alvo &quot; + pos.toString() + &quot; : &quot; + outcome);</b>
+<b class="nc">&nbsp;                state.contentStream.endText();</b>
+<b class="nc">&nbsp;                state.y -= 14;</b>
+&nbsp;            }
+<b class="nc">&nbsp;            state.y -= 10; // Espaço em branco no fim da rajada</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Verifica se o limite inferior da página foi atingido.
+&nbsp;     * Se sim, cria uma página nova automaticamente.
+&nbsp;     */
+&nbsp;    private static void checkPagination(PDDocument document, PdfState state, float limit) throws IOException {
+<b class="nc">&nbsp;        if (state.y &lt; limit) {</b>
+<b class="nc">&nbsp;            state.contentStream.close();</b>
+<b class="nc">&nbsp;            state.page = new PDPage();</b>
+<b class="nc">&nbsp;            document.addPage(state.page);</b>
+<b class="nc">&nbsp;            state.contentStream = new PDPageContentStream(document, state.page);</b>
+<b class="nc">&nbsp;            state.y = 750; // Volta ao topo da página nova</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-25 02:56</div>
+</div>
+</body>
+</html>
