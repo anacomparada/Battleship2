@@ -250,4 +250,5 @@ public class ScoreboardTest {
         assertDoesNotThrow(() -> Scoreboard.interactiveDisplay(scanner),
                 "interactiveDisplay() should handle an empty scoreboard without throwing");
     }
+
 }

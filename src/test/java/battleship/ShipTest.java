@@ -1,40 +1,27 @@
 package battleship;
 
 import org.junit.jupiter.api.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
-/**
- * Test class for Ship.
- * Cyclomatic Complexity for each method:
- * - Constructor: 1
- * - getCategory: 1
- * - getSize: 1
- * - getBearing: 1
- * - getPosition: 1
- * - getPositions: 1
- * - getAdjacentPositions: 3
- * - stillFloating: 2
- * - shoot: 2
- * - sink: 1
- * - occupies: 2
- * - tooCloseTo (IShip): 2
- * - tooCloseTo (IPosition): 2
- * - getTopMostPos: 2
- * - getBottomMostPos: 2
- * - getLeftMostPos: 2
- * - getRightMostPos: 2
- * - toString: 1
- * - buildShip: 6
- */
+import static org.junit.jupiter.api.Assertions.*;
+
 public class ShipTest {
 
     private Ship ship;
 
+    private static class TestShip extends Ship {
+        TestShip(String category, Compass bearing, IPosition pos, int size) {
+            super(category, bearing, pos, size);
+        }
+
+        void addPosition(IPosition position) {
+            this.positions.add(position);
+        }
+    }
+
     @BeforeEach
     void setUp() {
-        // Barge (Barca) — size 1, useful as a simple baseline
         ship = new Barge(Compass.NORTH, new Position(5, 5));
     }
 
@@ -43,357 +30,539 @@ public class ShipTest {
         ship = null;
     }
 
-    // ---------------------------------------------------------------
-    // Constructor
-    // ---------------------------------------------------------------
-
     @Test
-    void testConstructor() {
-        assertNotNull(ship, "Ship instance should not be null");
-        assertEquals("Barca", ship.getCategory(), "Ship category is incorrect");
-        assertEquals(Compass.NORTH, ship.getBearing(), "Ship bearing is incorrect");
-        assertEquals(1, ship.getSize(), "Ship size is incorrect");
-        assertFalse(ship.getPositions().isEmpty(), "Ship positions should not be empty");
+    void constructor() {
+        assertAll(
+                () -> assertNotNull(ship, "Error: expected ship not null"),
+                () -> assertEquals("Barca", ship.getCategory(), "Error: expected category Barca"),
+                () -> assertEquals(Compass.NORTH, ship.getBearing(), "Error: expected bearing NORTH"),
+                () -> assertEquals(1, ship.getSize(), "Error: expected size 1"),
+                () -> assertFalse(ship.getPositions().isEmpty(), "Error: expected positions not empty")
+        );
     }
 
     @Test
-    void testConstructorNullCategoryThrows() {
+    void constructorNullCategoryThrows() {
         assertThrows(NullPointerException.class,
-                () -> new Barge(null, new Position(0, 0)),
-                "Null bearing should throw NullPointerException");
+                () -> new TestShip(null, Compass.NORTH, new Position(0, 0), 0),
+                "Error: expected NullPointerException for null category");
     }
 
     @Test
-    void testConstructorNullPositionThrows() {
+    void constructorNullBearingThrows() {
         assertThrows(NullPointerException.class,
-                () -> new Barge(Compass.NORTH, null),
-                "Null position should throw NullPointerException");
+                () -> new TestShip("Teste", null, new Position(0, 0), 0),
+                "Error: expected NullPointerException for null bearing");
     }
 
-    // ---------------------------------------------------------------
-    // buildShip
-    // ---------------------------------------------------------------
+    @Test
+    void constructorNullPositionThrows() {
+        assertThrows(NullPointerException.class,
+                () -> new TestShip("Teste", Compass.NORTH, null, 0),
+                "Error: expected NullPointerException for null position");
+    }
 
     @Test
-    void testBuildShipBarca() {
+    void buildShip1() {
         Ship s = Ship.buildShip("barca", Compass.NORTH, new Position(0, 0));
-        assertNotNull(s, "buildShip should return a Barge for 'barca'");
-        assertEquals("Barca", s.getCategory());
+        assertTrue(s instanceof Barge, "Error: expected Barge for barca");
     }
 
     @Test
-    void testBuildShipCaravela() {
+    void buildShip2() {
         Ship s = Ship.buildShip("caravela", Compass.NORTH, new Position(0, 0));
-        assertNotNull(s, "buildShip should return a Caravel for 'caravela'");
-        assertEquals("Caravela", s.getCategory());
+        assertTrue(s instanceof Caravel, "Error: expected Caravel for caravela");
     }
 
     @Test
-    void testBuildShipNau() {
+    void buildShip3() {
         Ship s = Ship.buildShip("nau", Compass.NORTH, new Position(0, 0));
-        assertNotNull(s, "buildShip should return a Carrack for 'nau'");
-        assertEquals("Nau", s.getCategory());
+        assertTrue(s instanceof Carrack, "Error: expected Carrack for nau");
     }
 
     @Test
-    void testBuildShipFragata() {
+    void buildShip4() {
         Ship s = Ship.buildShip("fragata", Compass.NORTH, new Position(0, 0));
-        assertNotNull(s, "buildShip should return a Frigate for 'fragata'");
-        assertEquals("Fragata", s.getCategory());
+        assertTrue(s instanceof Frigate, "Error: expected Frigate for fragata");
     }
 
     @Test
-    void testBuildShipGaleao() {
+    void buildShip5() {
         Ship s = Ship.buildShip("galeao", Compass.NORTH, new Position(0, 0));
-        assertNotNull(s, "buildShip should return a Galleon for 'galeao'");
-        assertEquals("Galeao", s.getCategory());
+        assertTrue(s instanceof Galleon, "Error: expected Galleon for galeao");
     }
 
     @Test
-    void testBuildShipUnknown() {
+    void buildShip6() {
         Ship s = Ship.buildShip("unknown", Compass.NORTH, new Position(0, 0));
-        assertNull(s, "buildShip should return null for an unknown ship kind");
-    }
-
-    // ---------------------------------------------------------------
-    // getCategory
-    // ---------------------------------------------------------------
-
-    @Test
-    void testGetCategory() {
-        assertEquals("Barca", ship.getCategory(), "Ship category should be 'Barca'");
-    }
-
-    // ---------------------------------------------------------------
-    // getSize
-    // ---------------------------------------------------------------
-
-    @Test
-    void testGetSize() {
-        assertEquals(1, ship.getSize(), "Barge size should be 1");
+        assertNull(s, "Error: expected null for unknown ship kind");
     }
 
     @Test
-    void testGetSizeLargerShip() {
-        Ship galleon = new Galleon(Compass.NORTH, new Position(0, 0));
-        assertEquals(5, galleon.getSize(), "Galleon size should be 5");
+    void getCategory() {
+        assertEquals("Barca", ship.getCategory(), "Error: expected category Barca");
     }
 
-    // ---------------------------------------------------------------
-    // getBearing
-    // ---------------------------------------------------------------
-
     @Test
-    void testGetBearing() {
-        assertEquals(Compass.NORTH, ship.getBearing(), "Ship bearing should be NORTH");
+    void getSize() {
+        assertEquals(1, ship.getSize(), "Error: expected size 1");
     }
 
-    // ---------------------------------------------------------------
-    // getPosition
-    // ---------------------------------------------------------------
-
     @Test
-    void testGetPosition() {
-        IPosition pos = ship.getPosition();
-        assertNotNull(pos, "getPosition should not return null");
-        assertEquals(5, pos.getRow(), "Position row should be 5");
-        assertEquals(5, pos.getColumn(), "Position column should be 5");
+    void getBearing() {
+        assertEquals(Compass.NORTH, ship.getBearing(), "Error: expected bearing NORTH");
     }
 
-    // ---------------------------------------------------------------
-    // getPositions
-    // ---------------------------------------------------------------
+    @Test
+    void getPosition() {
+        assertAll(
+                () -> assertEquals(5, ship.getPosition().getRow(), "Error: expected row 5"),
+                () -> assertEquals(5, ship.getPosition().getColumn(), "Error: expected column 5")
+        );
+    }
 
     @Test
-    void testGetPositionsBarge() {
+    void getPositions() {
         List<IPosition> positions = ship.getPositions();
-        assertNotNull(positions, "Ship positions should not be null");
-        assertEquals(1, positions.size(), "Barge should have exactly one position");
-        assertEquals(5, positions.get(0).getRow(), "Position row should be 5");
-        assertEquals(5, positions.get(0).getColumn(), "Position column should be 5");
+
+        assertAll(
+                () -> assertNotNull(positions, "Error: expected positions not null"),
+                () -> assertEquals(1, positions.size(), "Error: expected 1 position"),
+                () -> assertEquals(new Position(5, 5), positions.get(0), "Error: expected position (5,5)")
+        );
     }
 
     @Test
-    void testGetPositionsLargerShip() {
-        Ship galleon = new Galleon(Compass.NORTH, new Position(4, 4));
-        assertEquals(5, galleon.getPositions().size(), "Galleon should occupy 5 positions");
-    }
-
-    // ---------------------------------------------------------------
-    // getAdjacentPositions
-    // ---------------------------------------------------------------
-
-    @Test
-    void testGetAdjacentPositionsNotNull() {
+    void getAdjacentPositions1() {
         List<IPosition> adj = ship.getAdjacentPositions();
-        assertNotNull(adj, "getAdjacentPositions should not return null");
+
+        assertAll(
+                () -> assertNotNull(adj, "Error: expected adjacent positions not null"),
+                () -> assertEquals(8, adj.size(), "Error: expected 8 adjacent positions")
+        );
     }
 
     @Test
-    void testGetAdjacentPositionsDoNotContainShipPositions() {
-        List<IPosition> adj = ship.getAdjacentPositions();
-        for (IPosition p : ship.getPositions())
-            assertFalse(adj.contains(p),
-                    "Adjacent positions should not include the ship's own positions");
+    void getAdjacentPositions2() {
+        TestShip testShip = new TestShip("Teste", Compass.NORTH, new Position(5, 5), 2);
+
+        Position p1 = new Position(5, 5);
+        Position p2 = new Position(5, 6);
+
+        testShip.addPosition(p1);
+        testShip.addPosition(p2);
+
+        List<IPosition> adj = testShip.getAdjacentPositions();
+
+        assertAll(
+                () -> assertFalse(adj.contains(p1), "Error: adjacent positions should not contain p1"),
+                () -> assertFalse(adj.contains(p2), "Error: adjacent positions should not contain p2")
+        );
     }
 
     @Test
-    void testGetAdjacentPositionsNoDuplicates() {
-        Ship galleon = new Galleon(Compass.NORTH, new Position(4, 4));
-        List<IPosition> adj = galleon.getAdjacentPositions();
+    void getAdjacentPositions3() {
+        TestShip testShip = new TestShip("Teste", Compass.NORTH, new Position(5, 5), 2);
+
+        testShip.addPosition(new Position(5, 5));
+        testShip.addPosition(new Position(5, 6));
+
+        List<IPosition> adj = testShip.getAdjacentPositions();
+
         long distinct = adj.stream().distinct().count();
-        assertEquals(distinct, adj.size(), "Adjacent positions should not contain duplicates");
+
+        assertEquals(distinct, adj.size(),
+                "Error: expected adjacent positions without duplicates");
     }
 
     @Test
-    void testGetAdjacentPositionsCount() {
-        // Barge at (5,5): 8 neighbours, none coincide with ship position
-        List<IPosition> adj = ship.getAdjacentPositions();
-        assertEquals(8, adj.size(), "Barge at (5,5) should have 8 adjacent positions");
-    }
+    void getAdjacentPositionsEmptyShip() {
+        TestShip emptyShip = new TestShip("Teste", Compass.NORTH, new Position(5, 5), 0);
 
-    // ---------------------------------------------------------------
-    // stillFloating
-    // ---------------------------------------------------------------
+        List<IPosition> adj = emptyShip.getAdjacentPositions();
 
-    @Test
-    void testStillFloatingTrue() {
-        assertTrue(ship.stillFloating(), "Ship should still be floating when not hit");
+        assertAll(
+                () -> assertNotNull(adj, "Error: expected adjacent positions not null"),
+                () -> assertTrue(adj.isEmpty(), "Error: expected no adjacent positions")
+        );
     }
 
     @Test
-    void testStillFloatingFalse() {
-        ship.getPositions().get(0).shoot();
-        assertFalse(ship.stillFloating(), "Ship should not be floating after all positions are hit");
+    void stillFloating1() {
+        assertTrue(ship.stillFloating(), "Error: expected ship to still be floating");
     }
 
     @Test
-    void testStillFloatingLargerShipPartialHit() {
-        Ship galleon = new Galleon(Compass.NORTH, new Position(0, 0));
-        // Hit only the first position
-        galleon.getPositions().get(0).shoot();
-        assertTrue(galleon.stillFloating(), "Galleon should still float with only one position hit");
-    }
-
-    // ---------------------------------------------------------------
-    // shoot
-    // ---------------------------------------------------------------
-
-    @Test
-    void testShootHit() {
-        Position target = new Position(5, 5);
-        ship.shoot(target);
-        assertTrue(ship.getPositions().get(0).isHit(), "Position should be marked as hit");
-    }
-
-    @Test
-    void testShootMiss() {
-        Position target = new Position(0, 0);
-        ship.shoot(target);
-        assertFalse(ship.getPositions().get(0).isHit(), "Position should not be hit for a missed target");
-    }
-
-    // ---------------------------------------------------------------
-    // sink
-    // ---------------------------------------------------------------
-
-    @Test
-    void testSink() {
+    void stillFloating2() {
         ship.sink();
-        for (IPosition pos : ship.getPositions())
-            assertTrue(pos.isHit(), "All positions should be hit after sink()");
+        assertFalse(ship.stillFloating(), "Error: expected ship not floating after sink");
     }
 
     @Test
-    void testSinkLargerShip() {
-        Ship galleon = new Galleon(Compass.NORTH, new Position(0, 0));
-        galleon.sink();
-        for (IPosition pos : galleon.getPositions())
-            assertTrue(pos.isHit(), "All Galleon positions should be hit after sink()");
-        assertFalse(galleon.stillFloating(), "Galleon should not be floating after sink()");
-    }
+    void stillFloatingAllHitLoop() {
+        Ship galleon = new Galleon(Compass.NORTH, new Position(5, 5));
 
-    // ---------------------------------------------------------------
-    // occupies
-    // ---------------------------------------------------------------
+        for (IPosition p : galleon.getPositions()) {
+            p.shoot();
+        }
 
-    @Test
-    void testOccupiesTrue() {
-        assertTrue(ship.occupies(new Position(5, 5)), "Ship should occupy position (5,5)");
+        assertFalse(galleon.stillFloating(),
+                "Error: ship should not float when all positions are hit");
     }
 
     @Test
-    void testOccupiesFalse() {
-        assertFalse(ship.occupies(new Position(1, 1)), "Ship should not occupy position (1,1)");
-    }
+    void shoot1() {
+        ship.shoot(new Position(5, 5));
 
-    // ---------------------------------------------------------------
-    // tooCloseTo (IPosition)
-    // ---------------------------------------------------------------
-
-    @Test
-    void testTooCloseToPositionTrue() {
-        assertTrue(ship.tooCloseTo(new Position(5, 6)), "Ship should be too close to adjacent position");
+        assertTrue(ship.getPositions().get(0).isHit(),
+                "Error: expected ship position to be hit");
     }
 
     @Test
-    void testTooCloseToPositionFalse() {
-        assertFalse(ship.tooCloseTo(new Position(7, 7)), "Ship should not be too close to distant position");
+    void shoot2() {
+        ship.shoot(new Position(0, 0));
+
+        assertFalse(ship.getPositions().get(0).isHit(),
+                "Error: expected ship position not to be hit");
     }
 
     @Test
-    void testTooCloseToPositionSelf() {
-        assertTrue(ship.tooCloseTo(new Position(5, 5)), "Ship should be too close to its own position");
+    void shootInvalidPosition() {
+        assertThrows(AssertionError.class,
+                () -> ship.shoot(new Position(-1, -1)),
+                "Error: expected AssertionError for invalid position");
     }
 
-    // ---------------------------------------------------------------
-    // tooCloseTo (IShip)
-    // ---------------------------------------------------------------
+    @Test
+    void sink() {
+        ship.sink();
+
+        for (IPosition pos : ship.getPositions()) {
+            assertTrue(pos.isHit(), "Error: expected all positions to be hit");
+        }
+    }
 
     @Test
-    void testTooCloseToShipTrue() {
+    void occupies1() {
+        assertTrue(ship.occupies(new Position(5, 5)),
+                "Error: expected ship to occupy position (5,5)");
+    }
+
+    @Test
+    void occupies2() {
+        assertFalse(ship.occupies(new Position(0, 0)),
+                "Error: expected ship not to occupy position (0,0)");
+    }
+
+    @Test
+    void occupiesEmptyShip() {
+        TestShip empty = new TestShip("Teste", Compass.NORTH, new Position(0, 0), 0);
+
+        assertFalse(empty.occupies(new Position(0, 0)),
+                "Error: empty ship should not occupy any position");
+    }
+
+    @Test
+    void tooCloseToPosition1() {
+        assertTrue(ship.tooCloseTo(new Position(5, 6)),
+                "Error: expected position to be too close");
+    }
+
+    @Test
+    void tooCloseToPosition2() {
+        assertFalse(ship.tooCloseTo(new Position(7, 7)),
+                "Error: expected position not to be too close");
+    }
+
+    @Test
+    void tooCloseToPositionEmptyShip() {
+        TestShip empty = new TestShip("Teste", Compass.NORTH, new Position(0, 0), 0);
+
+        assertFalse(empty.tooCloseTo(new Position(5, 5)),
+                "Error: empty ship should not be too close to any position");
+    }
+
+    @Test
+    void tooCloseToShip1() {
         Ship nearby = new Barge(Compass.NORTH, new Position(5, 6));
-        assertTrue(ship.tooCloseTo(nearby), "Ships should be too close");
+
+        assertTrue(ship.tooCloseTo(nearby),
+                "Error: expected ships to be too close");
     }
 
     @Test
-    void testTooCloseToShipFalse() {
-        Ship farShip = new Barge(Compass.NORTH, new Position(0, 0));
-        assertFalse(ship.tooCloseTo(farShip), "Ships should not be too close");
+    void tooCloseToShip2() {
+        Ship far = new Barge(Compass.NORTH, new Position(0, 0));
+
+        assertFalse(ship.tooCloseTo(far),
+                "Error: expected ships not to be too close");
     }
 
     @Test
-    void testTooCloseToShipSelf() {
-        assertTrue(ship.tooCloseTo(ship), "Ship should be too close to itself");
-    }
+    void tooCloseToShipWithNoPositions() {
+        TestShip emptyShip = new TestShip("Teste", Compass.NORTH, new Position(0, 0), 0);
 
-    // ---------------------------------------------------------------
-    // getTopMostPos / getBottomMostPos
-    // ---------------------------------------------------------------
-
-    @Test
-    void testGetTopMostPosBarge() {
-        assertEquals(5, ship.getTopMostPos(), "Topmost row should be 5 for Barge at (5,5)");
+        assertFalse(ship.tooCloseTo(emptyShip),
+                "Error: expected ship not to be too close to ship with no positions");
     }
 
     @Test
-    void testGetTopMostPosLargerShip() {
-        // Galleon NORTH starting at (4,4): occupies rows 0..4 (or 4..8 depending on impl)
-        Ship galleon = new Galleon(Compass.NORTH, new Position(4, 4));
-        int top = galleon.getTopMostPos();
-        assertTrue(top <= 4, "Topmost row of a multi-position ship should be <= starting row");
+    void tooCloseToBothEmptyShips() {
+        TestShip s1 = new TestShip("Teste", Compass.NORTH, new Position(0, 0), 0);
+        TestShip s2 = new TestShip("Teste", Compass.NORTH, new Position(0, 0), 0);
+
+        assertFalse(s1.tooCloseTo(s2),
+                "Error: two empty ships should not be too close");
     }
 
     @Test
-    void testGetBottomMostPosBarge() {
-        assertEquals(5, ship.getBottomMostPos(), "Bottommost row should be 5 for Barge at (5,5)");
+    void getTopMostPos1() {
+        assertEquals(5, ship.getTopMostPos(),
+                "Error: expected top most position 5");
     }
 
     @Test
-    void testGetBottomMostPosLargerShip() {
-        Ship galleon = new Galleon(Compass.SOUTH, new Position(0, 0));
-        int bottom = galleon.getBottomMostPos();
-        assertTrue(bottom >= 0, "Bottommost row of a south-facing galleon should be >= 0");
-    }
+    void getTopMostPos2() {
+        Ship frigate = new Frigate(Compass.NORTH, new Position(5, 5));
 
-    // ---------------------------------------------------------------
-    // getLeftMostPos / getRightMostPos
-    // ---------------------------------------------------------------
+        int expected = frigate.getPositions().stream()
+                .mapToInt(IPosition::getRow)
+                .min()
+                .getAsInt();
 
-    @Test
-    void testGetLeftMostPosBarge() {
-        assertEquals(5, ship.getLeftMostPos(), "Leftmost column should be 5 for Barge at (5,5)");
+        assertEquals(expected, frigate.getTopMostPos(),
+                "Error: expected minimum row");
     }
 
     @Test
-    void testGetRightMostPosBarge() {
-        assertEquals(5, ship.getRightMostPos(), "Rightmost column should be 5 for Barge at (5,5)");
+    void getBottomMostPos1() {
+        assertEquals(5, ship.getBottomMostPos(),
+                "Error: expected bottom most position 5");
     }
 
     @Test
-    void testGetLeftMostPosEastShip() {
-        Ship galleon = new Galleon(Compass.EAST, new Position(0, 0));
-        int left = galleon.getLeftMostPos();
-        assertTrue(left <= 0, "Leftmost column of an east-facing galleon starting at col 0 should be <= 0");
+    void getBottomMostPos2() {
+        Ship frigate = new Frigate(Compass.SOUTH, new Position(5, 5));
+
+        int expected = frigate.getPositions().stream()
+                .mapToInt(IPosition::getRow)
+                .max()
+                .getAsInt();
+
+        assertEquals(expected, frigate.getBottomMostPos(),
+                "Error: expected maximum row");
     }
 
     @Test
-    void testGetRightMostPosEastShip() {
-        Ship galleon = new Galleon(Compass.EAST, new Position(0, 0));
-        int right = galleon.getRightMostPos();
-        assertTrue(right >= 0, "Rightmost column of an east-facing galleon should be >= 0");
+    void getLeftMostPos1() {
+        assertEquals(5, ship.getLeftMostPos(),
+                "Error: expected left most position 5");
     }
 
-    // ---------------------------------------------------------------
-    // toString
-    // ---------------------------------------------------------------
+    @Test
+    void getLeftMostPos2() {
+        Ship frigate = new Frigate(Compass.WEST, new Position(5, 5));
+
+        int expected = frigate.getPositions().stream()
+                .mapToInt(IPosition::getColumn)
+                .min()
+                .getAsInt();
+
+        assertEquals(expected, frigate.getLeftMostPos(),
+                "Error: expected minimum column");
+    }
 
     @Test
-    void testToString() {
-        String result = ship.toString();
-        assertNotNull(result, "toString should not return null");
-        assertTrue(result.contains("Barca"), "toString should contain the category");
-        assertTrue(result.contains(ship.getBearing().toString()), "toString should contain the bearing");
-        assertTrue(result.contains(ship.getPosition().toString()), "toString should contain the position");
+    void getRightMostPos1() {
+        assertEquals(5, ship.getRightMostPos(),
+                "Error: expected right most position 5");
+    }
+
+    @Test
+    void getRightMostPos2() {
+        Ship frigate = new Frigate(Compass.EAST, new Position(5, 5));
+
+        int expected = frigate.getPositions().stream()
+                .mapToInt(IPosition::getColumn)
+                .max()
+                .getAsInt();
+
+        assertEquals(expected, frigate.getRightMostPos(),
+                "Error: expected maximum column");
+    }
+
+
+
+    @Test
+    void buildShipNullKindThrowsAssertionError() {
+        assertThrows(AssertionError.class,
+                () -> Ship.buildShip(null, Compass.NORTH, new Position(0, 0)),
+                "Error: expected AssertionError when shipKind is null");
+    }
+
+    @Test
+    void buildShipNullBearingThrowsAssertionError() {
+        assertThrows(AssertionError.class,
+                () -> Ship.buildShip("barca", null, new Position(0, 0)),
+                "Error: expected AssertionError when bearing is null");
+    }
+
+    @Test
+    void buildShipNullPositionThrowsAssertionError() {
+        assertThrows(AssertionError.class,
+                () -> Ship.buildShip("barca", Compass.NORTH, null),
+                "Error: expected AssertionError when position is null");
+    }
+
+    @Test
+    void occupiesNullThrowsAssertionError() {
+        assertThrows(AssertionError.class,
+                () -> ship.occupies(null),
+                "Error: expected AssertionError when occupies receives null");
+    }
+
+    @Test
+    void tooCloseToPositionNullThrowsAssertionError() {
+        assertThrows(AssertionError.class,
+                () -> ship.tooCloseTo((IPosition) null),
+                "Error: expected AssertionError when position is null");
+    }
+
+    @Test
+    void tooCloseToShipNullThrowsAssertionError() {
+        assertThrows(AssertionError.class,
+                () -> ship.tooCloseTo((IShip) null),
+                "Error: expected AssertionError when ship is null");
+    }
+
+    @Test
+    void shootNullThrowsAssertionError() {
+        assertThrows(AssertionError.class,
+                () -> ship.shoot(null),
+                "Error: expected AssertionError when shoot receives null");
+    }
+
+    @Test
+    void shootOutsideBoardThrowsAssertionError() {
+        assertThrows(AssertionError.class,
+                () -> ship.shoot(new Position(-1, 0)),
+                "Error: expected AssertionError when position is outside the board");
+    }
+
+
+    @Test
+    void stillFloatingStopsAtFirstNotHit() {
+        Ship galleon = new Galleon(Compass.NORTH, new Position(5, 5));
+
+        assertTrue(galleon.stillFloating(),
+                "Error: expected stillFloating to return true when first position is not hit");
+    }
+
+    @Test
+    void getTopMostPosNoChangeBranch() {
+        TestShip testShip = new TestShip("Teste", Compass.NORTH, new Position(0, 0), 3);
+
+        testShip.addPosition(new Position(5, 5));
+        testShip.addPosition(new Position(6, 5));
+        testShip.addPosition(new Position(7, 5));
+
+        assertEquals(5, testShip.getTopMostPos(),
+                "Error: expected top most row to remain 5");
+    }
+
+    @Test
+    void getBottomMostPosNoChangeBranch() {
+        TestShip testShip = new TestShip("Teste", Compass.NORTH, new Position(0, 0), 3);
+
+        testShip.addPosition(new Position(5, 5));
+        testShip.addPosition(new Position(4, 5));
+        testShip.addPosition(new Position(3, 5));
+
+        assertEquals(5, testShip.getBottomMostPos(),
+                "Error: expected bottom most row to remain 5");
+    }
+
+    @Test
+    void getLeftMostPosNoChangeBranch() {
+        TestShip testShip = new TestShip("Teste", Compass.NORTH, new Position(0, 0), 3);
+
+        testShip.addPosition(new Position(5, 5));
+        testShip.addPosition(new Position(5, 6));
+        testShip.addPosition(new Position(5, 7));
+
+        assertEquals(5, testShip.getLeftMostPos(),
+                "Error: expected left most column to remain 5");
+    }
+
+    @Test
+    void getRightMostPosNoChangeBranch() {
+        TestShip testShip = new TestShip("Teste", Compass.NORTH, new Position(0, 0), 3);
+
+        testShip.addPosition(new Position(5, 5));
+        testShip.addPosition(new Position(5, 4));
+        testShip.addPosition(new Position(5, 3));
+
+        assertEquals(5, testShip.getRightMostPos(),
+                "Error: expected right most column to remain 5");
+    }
+
+
+    @Test
+    void getTopMostPosChangeBranch() {
+        TestShip testShip = new TestShip("Teste", Compass.NORTH, new Position(0, 0), 3);
+
+        testShip.addPosition(new Position(5, 5));
+        testShip.addPosition(new Position(4, 5));
+        testShip.addPosition(new Position(3, 5));
+
+        assertEquals(3, testShip.getTopMostPos(),
+                "Error: expected top most row to change to 3");
+    }
+
+    @Test
+    void getBottomMostPosChangeBranch() {
+        TestShip testShip = new TestShip("Teste", Compass.NORTH, new Position(0, 0), 3);
+
+        testShip.addPosition(new Position(5, 5));
+        testShip.addPosition(new Position(6, 5));
+        testShip.addPosition(new Position(7, 5));
+
+        assertEquals(7, testShip.getBottomMostPos(),
+                "Error: expected bottom most row to change to 7");
+    }
+
+    @Test
+    void getLeftMostPosChangeBranch() {
+        TestShip testShip = new TestShip("Teste", Compass.NORTH, new Position(0, 0), 3);
+
+        testShip.addPosition(new Position(5, 5));
+        testShip.addPosition(new Position(5, 4));
+        testShip.addPosition(new Position(5, 3));
+
+        assertEquals(3, testShip.getLeftMostPos(),
+                "Error: expected left most column to change to 3");
+    }
+
+    @Test
+    void getRightMostPosChangeBranch() {
+        TestShip testShip = new TestShip("Teste", Compass.NORTH, new Position(0, 0), 3);
+
+        testShip.addPosition(new Position(5, 5));
+        testShip.addPosition(new Position(5, 6));
+        testShip.addPosition(new Position(5, 7));
+
+        assertEquals(7, testShip.getRightMostPos(),
+                "Error: expected right most column to change to 7");
+    }
+
+
+
+
+    @Test
+    void toStringTest() {
+        String expected = "[Barca n F6]";
+
+        assertEquals(expected, ship.toString(),
+                "Error: expected " + expected + " but got " + ship.toString());
     }
 }
