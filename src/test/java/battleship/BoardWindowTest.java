@@ -183,6 +183,7 @@ public class BoardWindowTest {
             for (int c = 0; c < Game.BOARD_SIZE; c++)
                 map[r][c] = ' ';
 
+
         assertDoesNotThrow(
                 () -> BoardWindow.show(map, map, emptyShots, emptyShots),
                 "show() should handle a full " + Game.BOARD_SIZE + "x" + Game.BOARD_SIZE + " board");
