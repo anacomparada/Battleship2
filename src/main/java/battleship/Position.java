@@ -121,10 +121,12 @@ public class Position implements IPosition {
 	 * @param other the other position to compare
 	 * @return true if the positions are adjacent, false otherwise
 	 */
+
 	@Override
 	public boolean isAdjacentTo(IPosition other) {
 		return Math.abs(this.row - other.getRow()) <= 1 && Math.abs(this.column - other.getColumn()) <= 1;
 	}
+
 
 	/**
 	 * Returns all valid adjacent positions (up, right, down, left) for this position.
