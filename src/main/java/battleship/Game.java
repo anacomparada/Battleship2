@@ -320,8 +320,6 @@ public class Game implements IGame
 	 * @throws RuntimeException if there is an error during the JSON serialization of the shots.
 	 */
 	public String randomEnemyFire() {
-
-		// Criar uma instância de Random com uma seed baseada no timestamp atual
 		Random random = new Random(System.currentTimeMillis());
 
 		Set<IPosition> usablePositions = new HashSet<IPosition>();
@@ -330,31 +328,35 @@ public class Game implements IGame
 				usablePositions.add(new Position(r, c));
 
 		this.myFleet.getSunkShips().forEach(ship -> usablePositions.removeAll(ship.getAdjacentPositions()));
-		this.alienMoves.forEach(move ->  usablePositions.removeAll(move.getShots()));
+		this.alienMoves.forEach(move -> usablePositions.removeAll(move.getShots()));
 
 		List<IPosition> candidateShots = new ArrayList<>(usablePositions);
-
-		// Criar lista para armazenar os tiros
 		List<IPosition> shots = new ArrayList<IPosition>();
 
 		System.out.println();
-		// Gerar coordenadas únicas até atingir o número definido por NUMBER_SHOTS
 
-		IPosition newShot = null;
-		if (candidateShots.size() >= Game.NUMBER_SHOTS)
+		if (candidateShots.size() >= Game.NUMBER_SHOTS) {
 			while (shots.size() < Game.NUMBER_SHOTS) {
-				newShot = candidateShots.get(random.nextInt(candidateShots.size()));
+				IPosition newShot = candidateShots.get(random.nextInt(candidateShots.size()));
 				if (!shots.contains(newShot))
 					shots.add(newShot);
 			}
-		else {
-			while (shots.size() < candidateShots.size()) {
-				newShot = candidateShots.get(random.nextInt(candidateShots.size()));
-				if (!shots.contains(newShot))
-					shots.add(newShot);
+		} else {
+			// Adiciona todas as posições disponíveis (pode ser 0, 1 ou 2)
+			for (IPosition pos : candidateShots) {
+				if (!shots.contains(pos))
+					shots.add(pos);
 			}
-			while (shots.size() < Game.NUMBER_SHOTS)
-				shots.add(newShot);
+			// Completa com posições já usadas se necessário
+			if (!shots.isEmpty()) {
+				while (shots.size() < Game.NUMBER_SHOTS)
+					shots.add(shots.get(0));
+			} else {
+				// Sem candidatos: repete a primeira posição do tabuleiro
+				IPosition fallback = new Position(0, 0);
+				while (shots.size() < Game.NUMBER_SHOTS)
+					shots.add(fallback);
+			}
 		}
 
 		System.out.print("rajada ");
@@ -363,7 +365,6 @@ public class Game implements IGame
 		System.out.println();
 
 		this.fireShots(shots);
-
 		return Game.jsonShots(shots);
 	}
 
@@ -373,8 +374,6 @@ public class Game implements IGame
 	 * @return JSON com os tiros gerados pelo jogador.
 	 */
 	public String randomPlayerFire() {
-
-		// Criar uma instância de Random com uma seed baseada no timestamp atual
 		Random random = new Random(System.currentTimeMillis());
 
 		Set<IPosition> usablePositions = new HashSet<IPosition>();
@@ -383,31 +382,35 @@ public class Game implements IGame
 				usablePositions.add(new Position(r, c));
 
 		this.alienFleet.getSunkShips().forEach(ship -> usablePositions.removeAll(ship.getAdjacentPositions()));
-		this.myMoves.forEach(move ->  usablePositions.removeAll(move.getShots()));
+		this.myMoves.forEach(move -> usablePositions.removeAll(move.getShots()));
 
 		List<IPosition> candidateShots = new ArrayList<>(usablePositions);
-
-		// Criar lista para armazenar os tiros
 		List<IPosition> shots = new ArrayList<IPosition>();
 
 		System.out.println();
-		// Gerar coordenadas únicas até atingir o número definido por NUMBER_SHOTS
 
-		IPosition newShot = null;
-		if (candidateShots.size() >= Game.NUMBER_SHOTS)
+		if (candidateShots.size() >= Game.NUMBER_SHOTS) {
 			while (shots.size() < Game.NUMBER_SHOTS) {
-				newShot = candidateShots.get(random.nextInt(candidateShots.size()));
+				IPosition newShot = candidateShots.get(random.nextInt(candidateShots.size()));
 				if (!shots.contains(newShot))
 					shots.add(newShot);
 			}
-		else {
-			while (shots.size() < candidateShots.size()) {
-				newShot = candidateShots.get(random.nextInt(candidateShots.size()));
-				if (!shots.contains(newShot))
-					shots.add(newShot);
+		} else {
+			// Adiciona todas as posições disponíveis (pode ser 0, 1 ou 2)
+			for (IPosition pos : candidateShots) {
+				if (!shots.contains(pos))
+					shots.add(pos);
 			}
-			while (shots.size() < Game.NUMBER_SHOTS)
-				shots.add(newShot);
+			// Completa com posições já usadas se necessário
+			if (!shots.isEmpty()) {
+				while (shots.size() < Game.NUMBER_SHOTS)
+					shots.add(shots.get(0));
+			} else {
+				// Sem candidatos: repete a primeira posição do tabuleiro
+				IPosition fallback = new Position(0, 0);
+				while (shots.size() < Game.NUMBER_SHOTS)
+					shots.add(fallback);
+			}
 		}
 
 		System.out.print("rajada ");
@@ -416,7 +419,6 @@ public class Game implements IGame
 		System.out.println();
 
 		this.fireShotsAtAlien(shots);
-
 		return Game.jsonShots(shots);
 	}
 
@@ -753,4 +755,6 @@ public class Game implements IGame
 
 		BoardWindow.close();
 	}
+
+
 }
