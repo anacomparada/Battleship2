@@ -622,7 +622,7 @@ class MoveTest {
         move.processEnemyFire(true);
 
         assertTrue(outputStream.toString().contains("exterior"),
-                "Error: expected outside shot message when output was initially empty.");
+                " Error: expected outside shot message when output was initially empty.");
     }
 
     @Test
