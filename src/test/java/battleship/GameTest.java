@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * - randomEnemyFire: 3
  * - randomPlayerFire: 3
  */
-public class GameTest {
+class GameTest {
 
 	private IFleet myFleet;
 	private Game game;
@@ -302,12 +302,14 @@ public class GameTest {
 	@DisplayName("readEnemyFire: prefixo 'rajada' é ignorado")
 	void readEnemyFireWithRajadaPrefix() {
 		assertDoesNotThrow(() -> game.readEnemyFire(new Scanner("rajada A1 B2 C3")));
+		assertEquals(1, game.getMyMoves().size());
 	}
 
 	@Test
 	@DisplayName("readEnemyFire: prefixo 'RAJADA' maiúsculas é ignorado")
 	void readEnemyFireWithRajadaUpperCase() {
 		assertDoesNotThrow(() -> game.readEnemyFire(new Scanner("RAJADA A1 B2 C3")));
+		assertEquals(1, game.getMyMoves().size());
 	}
 
 	@Test
@@ -370,12 +372,14 @@ public class GameTest {
 	@DisplayName("readAlienFire: prefixo 'rajada' é ignorado")
 	void readAlienFireWithRajadaPrefix() {
 		assertDoesNotThrow(() -> game.readAlienFire(new Scanner("rajada A1 B2 C3")));
+		assertEquals(1, game.getAlienMoves().size());
 	}
 
 	@Test
 	@DisplayName("readAlienFire: prefixo 'Rajada' misto é ignorado")
 	void readAlienFireWithRajadaMixedCase() {
 		assertDoesNotThrow(() -> game.readAlienFire(new Scanner("Rajada D1 E2 F3")));
+		assertEquals(1, game.getAlienMoves().size());
 	}
 
 	// -------------------------------------------------------
@@ -528,14 +532,18 @@ public class GameTest {
 	}
 
 	// -------------------------------------------------------
-	// printBothBoards / buildMap (via try-catch HeadlessException)
+	// printBothBoards / buildMap (S2699 + S108 corrigidos)
 	// -------------------------------------------------------
 
 	@Test
 	@DisplayName("printBothBoards: ramo myMoves e alienMoves vazios (showShots=false)")
 	void printBothBoardsEmptyMoves() {
 		try { game.printBothBoards(false); }
-		catch (java.awt.HeadlessException ignored) {}
+		catch (java.awt.HeadlessException ignored) {
+			// Esperado em ambiente CI sem display — comportamento correto
+		}
+		assertTrue(game.getMyMoves().isEmpty(), "MyMoves should still be empty after printBothBoards");
+		assertTrue(game.getAlienMoves().isEmpty(), "AlienMoves should still be empty after printBothBoards");
 	}
 
 	@Test
@@ -543,8 +551,14 @@ public class GameTest {
 	void printBothBoardsWithMovesShowShots() {
 		game.randomPlayerFire();
 		game.randomEnemyFire();
+		int myMovesBefore = game.getMyMoves().size();
+		int alienMovesBefore = game.getAlienMoves().size();
 		try { game.printBothBoards(true); }
-		catch (java.awt.HeadlessException ignored) {}
+		catch (java.awt.HeadlessException ignored) {
+			// Esperado em ambiente CI sem display — comportamento correto
+		}
+		assertEquals(myMovesBefore, game.getMyMoves().size(), "MyMoves size should not change");
+		assertEquals(alienMovesBefore, game.getAlienMoves().size(), "AlienMoves size should not change");
 	}
 
 	@Test
@@ -552,8 +566,12 @@ public class GameTest {
 	void printBothBoardsHideShipsAndShots() {
 		game.randomPlayerFire();
 		game.randomEnemyFire();
+		int myMovesBefore = game.getMyMoves().size();
 		try { game.printBothBoards(true); }
-		catch (java.awt.HeadlessException ignored) {}
+		catch (java.awt.HeadlessException ignored) {
+			// Esperado em ambiente CI sem display — comportamento correto
+		}
+		assertEquals(myMovesBefore, game.getMyMoves().size(), "MyMoves size should not change after printBothBoards");
 	}
 
 	@Test
@@ -562,8 +580,12 @@ public class GameTest {
 		Ship ship = new Barge(Compass.NORTH, new Position(1, 1));
 		myFleet.addShip(ship);
 		game.fireShots(buildDistinctShots(ship.getPositions().get(0)));
+		int movesBefore = game.getAlienMoves().size();
 		try { game.printBothBoards(true); }
-		catch (java.awt.HeadlessException ignored) {}
+		catch (java.awt.HeadlessException ignored) {
+			// Esperado em ambiente CI sem display — comportamento correto
+		}
+		assertEquals(movesBefore, game.getAlienMoves().size(), "AlienMoves size should not change");
 	}
 
 	@Test
@@ -574,8 +596,12 @@ public class GameTest {
 		for (IPosition pos : ship.getPositions()) {
 			game.fireShots(buildDistinctShots(pos));
 		}
+		assertEquals(1, game.getSunkShips(), "Ship should be sunk before printBothBoards");
 		try { game.printBothBoards(true); }
-		catch (java.awt.HeadlessException ignored) {}
+		catch (java.awt.HeadlessException ignored) {
+			// Esperado em ambiente CI sem display — comportamento correto
+		}
+		assertEquals(1, game.getSunkShips(), "Sunk ships count should not change after printBothBoards");
 	}
 
 	@Test
@@ -587,24 +613,36 @@ public class GameTest {
 				new Position(0, 2)
 		);
 		game.fireShots(shots);
+		assertEquals(1, game.getInvalidShots(), "Invalid shot should be counted");
 		try { game.printBothBoards(true); }
-		catch (java.awt.HeadlessException ignored) {}
+		catch (java.awt.HeadlessException ignored) {
+			// Esperado em ambiente CI sem display — comportamento correto
+		}
+		assertEquals(1, game.getInvalidShots(), "Invalid shots count should not change after printBothBoards");
 	}
 
 	@Test
 	@DisplayName("printMyBoard: não lança exceção inesperada")
 	void printMyBoardDoesNotThrowUnexpected() {
 		game.randomEnemyFire();
+		int movesBefore = game.getAlienMoves().size();
 		try { game.printMyBoard(true, true); }
-		catch (java.awt.HeadlessException ignored) {}
+		catch (java.awt.HeadlessException ignored) {
+			// Esperado em ambiente CI sem display — comportamento correto
+		}
+		assertEquals(movesBefore, game.getAlienMoves().size(), "AlienMoves should not change after printMyBoard");
 	}
 
 	@Test
 	@DisplayName("printAlienBoard: não lança exceção inesperada")
 	void printAlienBoardDoesNotThrowUnexpected() {
 		game.randomPlayerFire();
+		int movesBefore = game.getMyMoves().size();
 		try { game.printAlienBoard(true, false); }
-		catch (java.awt.HeadlessException ignored) {}
+		catch (java.awt.HeadlessException ignored) {
+			// Esperado em ambiente CI sem display — comportamento correto
+		}
+		assertEquals(movesBefore, game.getMyMoves().size(), "MyMoves should not change after printAlienBoard");
 	}
 
 	// -------------------------------------------------------
