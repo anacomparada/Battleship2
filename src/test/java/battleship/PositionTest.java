@@ -3,6 +3,8 @@ package battleship;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
+
 /**
  * Test class for Position.
  * Author: britoeabreu
@@ -27,13 +29,16 @@ public class PositionTest {
 	@BeforeEach
 	void setUp() {
 		position = new Position(2, 3);
-	//	position = new Position('C', 4);
 	}
 
 	@AfterEach
 	void tearDown() {
 		position = null;
 	}
+
+	// ---------------------------------------------------------------
+	// Constructor (int, int)
+	// ---------------------------------------------------------------
 
 	@Test
 	void constructor() {
@@ -45,6 +50,31 @@ public class PositionTest {
 		assertFalse(pos.isHit(), "New position should not be hit");
 	}
 
+	// ---------------------------------------------------------------
+	// Constructor (char, int)
+	// ---------------------------------------------------------------
+
+	@Test
+	void constructorClassic() {
+		Position pos = new Position('C', 4);
+		assertNotNull(pos, "Failed to create Position from classic notation");
+		assertEquals(2, pos.getRow(), "Expected row 2 (C) but got " + pos.getRow());
+		assertEquals(3, pos.getColumn(), "Expected column 3 (4-1) but got " + pos.getColumn());
+		assertFalse(pos.isOccupied(), "New position should not be occupied");
+		assertFalse(pos.isHit(), "New position should not be hit");
+	}
+
+	@Test
+	void constructorClassicLowercase() {
+		Position pos = new Position('c', 4);
+		assertEquals(2, pos.getRow(), "Lowercase row letter should be handled correctly");
+		assertEquals(3, pos.getColumn(), "Column should be 3 for classic column 4");
+	}
+
+	// ---------------------------------------------------------------
+	// getRow / getColumn
+	// ---------------------------------------------------------------
+
 	@Test
 	void getRow() {
 		assertEquals(2, position.getRow(), "Failed to get row: expected 2 but got " + position.getRow());
@@ -55,15 +85,23 @@ public class PositionTest {
 		assertEquals(3, position.getColumn(), "Failed to get column: expected 3 but got " + position.getColumn());
 	}
 
+	// ---------------------------------------------------------------
+	// getClassicRow / getClassicColumn
+	// ---------------------------------------------------------------
+
 	@Test
 	void getClassicRow() {
-		assertEquals('C', position.getClassicRow(), "Failed to get row: expected 2 but got " + position.getRow());
+		assertEquals('C', position.getClassicRow(), "Expected classic row 'C' for row 2");
 	}
 
 	@Test
 	void getClassicColumn() {
-		assertEquals(3, position.getColumn(), "Failed to get column: expected 3 but got " + position.getColumn());
+		assertEquals(4, position.getClassicColumn(), "Expected classic column 4 for column index 3");
 	}
+
+	// ---------------------------------------------------------------
+	// isInside
+	// ---------------------------------------------------------------
 
 	@Test
 	void isValid1() {
@@ -95,6 +133,10 @@ public class PositionTest {
 		assertFalse(position.isInside(), "Position with column >= BOARD_SIZE should be invalid");
 	}
 
+	// ---------------------------------------------------------------
+	// isAdjacentTo
+	// ---------------------------------------------------------------
+
 	@Test
 	void isAdjacentTo1() {
 		Position other = new Position(2, 4);
@@ -120,10 +162,80 @@ public class PositionTest {
 	}
 
 	@Test
+	void isAdjacentToSelf() {
+		assertTrue(position.isAdjacentTo(position), "A position should be adjacent to itself");
+	}
+
+	@Test
 	void isAdjacentToWithNull() {
 		assertThrows(NullPointerException.class, () -> position.isAdjacentTo(null),
 				"isAdjacentTo should throw NullPointerException for null input");
 	}
+
+	// ---------------------------------------------------------------
+	// adjacentPositions
+	// ---------------------------------------------------------------
+
+	@Test
+	void adjacentPositionsCenter() {
+		// position = (2,3) — away from all borders, should have 8 neighbours
+		List<IPosition> adj = position.adjacentPositions();
+		assertEquals(8, adj.size(), "Central position should have 8 adjacent positions");
+	}
+
+	@Test
+	void adjacentPositionsCorner() {
+		// Corner (0,0) — only 3 valid neighbours
+		Position corner = new Position(0, 0);
+		List<IPosition> adj = corner.adjacentPositions();
+		assertEquals(3, adj.size(), "Corner position should have 3 adjacent positions");
+	}
+
+	@Test
+	void adjacentPositionsEdge() {
+		// Top edge, not a corner: (0,3) — 5 valid neighbours
+		Position edge = new Position(0, 3);
+		List<IPosition> adj = edge.adjacentPositions();
+		assertEquals(5, adj.size(), "Edge (non-corner) position should have 5 adjacent positions");
+	}
+
+	@Test
+	void adjacentPositionsAllInsideBoard() {
+		List<IPosition> adj = position.adjacentPositions();
+		for (IPosition p : adj) {
+			assertTrue(((Position) p).isInside(), "All adjacent positions must be inside the board");
+		}
+	}
+
+	@Test
+	void adjacentPositionsDoesNotContainSelf() {
+		List<IPosition> adj = position.adjacentPositions();
+		assertFalse(adj.contains(position), "adjacentPositions should not contain the position itself");
+	}
+
+	// ---------------------------------------------------------------
+	// randomPosition
+	// ---------------------------------------------------------------
+
+	@Test
+	void randomPosition() {
+		Position pos = Position.randomPosition();
+		assertNotNull(pos, "randomPosition should not return null");
+		assertTrue(pos.isInside(), "Random position should always be inside the board");
+	}
+
+	@Test
+	void randomPositionMultipleCalls() {
+		// Ensures no call ever produces an out-of-bounds position
+		for (int i = 0; i < 100; i++) {
+			Position pos = Position.randomPosition();
+			assertTrue(pos.isInside(), "Random position must always be inside the board (iteration " + i + ")");
+		}
+	}
+
+	// ---------------------------------------------------------------
+	// isOccupied / occupy
+	// ---------------------------------------------------------------
 
 	@Test
 	void isOccupied() {
@@ -132,12 +244,20 @@ public class PositionTest {
 		assertTrue(position.isOccupied(), "Position should be occupied after occupy()");
 	}
 
+	// ---------------------------------------------------------------
+	// isHit / shoot
+	// ---------------------------------------------------------------
+
 	@Test
 	void isHit() {
 		assertFalse(position.isHit(), "New position should not be hit");
 		position.shoot();
 		assertTrue(position.isHit(), "Position should be hit after shoot()");
 	}
+
+	// ---------------------------------------------------------------
+	// equals
+	// ---------------------------------------------------------------
 
 	@Test
 	void equals1() {
@@ -159,7 +279,7 @@ public class PositionTest {
 	@Test
 	void equals4() {
 		Position other = new Position(2, 4);
-		assertFalse(position.equals(other), "Positions with the same row but different column should not be equal");
+		assertFalse(position.equals(other), "Positions with same row but different column should not be equal");
 	}
 
 	@Test
@@ -168,15 +288,39 @@ public class PositionTest {
 	}
 
 	@Test
+	void equalsIgnoresOccupiedAndHitState() {
+		// equals is based only on row/column, not state
+		Position other = new Position(2, 3);
+		other.occupy();
+		other.shoot();
+		assertTrue(position.equals(other),
+				"Positions with same coordinates should be equal regardless of occupied/hit state");
+	}
+
+	// ---------------------------------------------------------------
+	// hashCode
+	// ---------------------------------------------------------------
+
+	@Test
 	void hashCodeConsistency() {
 		Position same = new Position(2, 3);
 		assertEquals(position.hashCode(), same.hashCode(),
-				"Hash codes not consistent for equal positions");
+				"Hash codes should be consistent for positions with the same coordinates and state");
 	}
 
 	@Test
+	void hashCodeDifferentPositions() {
+		Position other = new Position(2, 4);
+		assertNotEquals(position.hashCode(), other.hashCode(),
+				"Different positions should typically have different hash codes");
+	}
+
+	// ---------------------------------------------------------------
+	// toString
+	// ---------------------------------------------------------------
+
+	@Test
 	void toStringFormat() {
-//		String expected = "Row = C, Column = 4";
 		String expected = "C4";
 		assertEquals(expected, position.toString(),
 				"Incorrect string representation: expected '" + expected +
