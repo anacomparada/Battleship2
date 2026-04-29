@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package battleship;
 
@@ -33,7 +33,11 @@ public interface IGame
 	 */
 	void fireShots(List<IPosition> shots);
 
-	record ShotResult(boolean valid, boolean repeated, IShip ship, boolean sunk) {}
+	record ShotResult(boolean valid, boolean repeated, IShip ship, boolean sunk) {
+		String getCategory() {
+		return ship().getCategory();
+	}
+	}
 
 	/**
 	 * Fires a single shot at the specified position and indicates whether the shot is valid, repeated,
