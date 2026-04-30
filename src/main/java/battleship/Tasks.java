@@ -236,7 +236,7 @@ public class Tasks {
 
         Fleet fleet = new Fleet();
         int i = 0;
-        while (i < Fleet.FLEET_SIZE) {
+        while (i < IFleet.FLEET_SIZE) {
             IShip s = readShip(in);
             if (s != null) {
                 boolean success = fleet.addShip(s);
@@ -308,7 +308,8 @@ public class Tasks {
             char column = input.charAt(0);
             int  row    = Integer.parseInt(input.substring(1));
             return new Position(column, row);
-        } else if (part2 != null && part1.matches("[A-Z]") && part2.matches("\\d+")) {
+        }
+        else if (part2 != null && part1.matches("[A-Z]") && part2.matches("\\d+")) {
             char column = part1.charAt(0);
             int  row    = Integer.parseInt(part2);
             return new Position(column, row);
