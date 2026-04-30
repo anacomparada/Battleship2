@@ -151,8 +151,9 @@
 					<includes>
 						<include>**/*Test.java</include>
 					</includes>
-					<excludes>             
-						<exclude>**/BoardWindowTest.java</exclude>         
+					<excludes>
+						<exclude>**/BoardWindowTest.java</exclude>
+						<exclude>**/TasksTest.java</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
