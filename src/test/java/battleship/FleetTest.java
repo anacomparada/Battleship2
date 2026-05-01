@@ -194,13 +194,15 @@ class FleetTest {
                 "Error: printShips should execute without throwing exceptions for a valid list.");
     }
 
+    // CORREÇÃO: AssertionError alterado para IllegalArgumentException
     @Test
     void testPrintShips2() {
-        AssertionError error = assertThrows(AssertionError.class, () -> fleet.printShips(null),
-                "Error: printShips should throw an AssertionError when passing a null list.");
+        IllegalArgumentException error = assertThrows(IllegalArgumentException.class, () -> fleet.printShips(null),
+                "Error: printShips should throw an IllegalArgumentException when passing a null list.");
         assertNotNull(error, "Error: Exception should not be null.");
     }
 
+    // CORREÇÃO: AssertionError alterado para IllegalArgumentException
     @Test
     void testPrintShipsByCategory() {
         IShip ship = new Barge(Compass.NORTH, new Position(1, 1));
@@ -209,8 +211,8 @@ class FleetTest {
         assertDoesNotThrow(() -> fleet.printShipsByCategory("Barca"),
                 "Error: printShipsByCategory should not throw exceptions for valid categories.");
 
-        assertThrows(AssertionError.class, () -> fleet.printShipsByCategory(null),
-                "Error: printShipsByCategory should throw AssertionError when category is null.");
+        assertThrows(IllegalArgumentException.class, () -> fleet.printShipsByCategory(null),
+                "Error: printShipsByCategory should throw IllegalArgumentException when category is null.");
     }
 
     @Test
@@ -229,12 +231,13 @@ class FleetTest {
                 "Error: printAllShips should not throw exceptions.");
     }
 
+    // CORREÇÃO: Todos os lançamentos alterados para IllegalArgumentException
     @Test
     void testAssertionsForNullParameters() {
-        assertAll("Null checks using assert keywords",
-                () -> assertThrows(AssertionError.class, () -> fleet.addShip(null), "Error: addShip should reject null"),
-                () -> assertThrows(AssertionError.class, () -> fleet.getShipsLike(null), "Error: getShipsLike should reject null"),
-                () -> assertThrows(AssertionError.class, () -> fleet.shipAt(null), "Error: shipAt should reject null")
+        assertAll("Null checks using exceptions",
+                () -> assertThrows(IllegalArgumentException.class, () -> fleet.addShip(null), "Error: addShip should reject null"),
+                () -> assertThrows(IllegalArgumentException.class, () -> fleet.getShipsLike(null), "Error: getShipsLike should reject null"),
+                () -> assertThrows(IllegalArgumentException.class, () -> fleet.shipAt(null), "Error: shipAt should reject null")
         );
     }
 
