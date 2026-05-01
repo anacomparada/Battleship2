@@ -10,6 +10,11 @@ import org.jetbrains.annotations.NotNull;
  * The type Tasks.
  */
 public class Tasks {
+
+    private Tasks() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * The constant LOGGER.
      */
@@ -20,24 +25,34 @@ public class Tasks {
      */
     private static final String GOODBYE_MESSAGE = "Bons ventos!";
 
-	/**
-	 * Strings to be used by the user
-	 */
-	private static final String AJUDA = "ajuda";
-	private static final String GERAFROTA = "gerafrota";
-	private static final String LEFROTA = "lefrota";
-	private static final String DESISTIR = "desisto";
-	private static final String RAJADA = "rajada";
-	private static final String TIROS = "tiros";
-	private static final String MAPA = "mapa";
-	private static final String STATUS = "estado";
-	private static final String SIMULA = "simula";
-	private static final String GERAREPORT = "gerareport";
+    /**
+     * Strings to be used by the user
+     */
+    private static final String AJUDA = "ajuda";
+    private static final String GERAFROTA = "gerafrota";
+    private static final String LEFROTA = "lefrota";
+    private static final String DESISTIR = "desisto";
+    private static final String RAJADA = "rajada";
+    private static final String TIROS = "tiros";
+    private static final String MAPA = "mapa";
+    private static final String STATUS = "estado";
+    private static final String SIMULA = "simula";
+    private static final String GERAREPORT = "gerareport";
     private static final String RANKING    = "ranking";   // NEW: show scoreboard
     private static final String NOME       = "nome";      // NEW: set player name
 
     /** Default player name if none is set. */
     private static String playerName = "Jogador";
+
+    /**
+     * Classe auxiliar interna para guardar o estado da sessão de jogo e reduzir
+     * a complexidade cognitiva do método menu() (Refabricação do Brain Method)
+     */
+    private static class GameSession {
+        IFleet myFleet = null;
+        Game game = null;
+        Game lastGame = null;
+    }
 
     /**
      * Asks the player to type their name at the start of the session.
@@ -63,146 +78,149 @@ public class Tasks {
      * Main menu loop.
      */
     public static void menu() {
-
-		IFleet myFleet = null;
-		Game game = null;
-        Game lastGame = null;
-
+        GameSession session = new GameSession();
         Scanner in = new Scanner(System.in);
         askPlayerName(in);
         menuHelp();
-
-		System.out.print("> ");
-		String command = in.next();
-		while (!command.equals(DESISTIR)) {
-
-			switch (command) {
-				case GERAFROTA:
-					myFleet = Fleet.createRandom();
-					game = new Game(myFleet);
-					game.printMyBoard(false, true);
-					break;
-				case LEFROTA:
-					myFleet = buildFleet(in);
-					game = new Game(myFleet);
-					game.printMyBoard(false, true);
-					break;
-				case STATUS:
-					if (myFleet != null)
-						myFleet.printStatus();
-					break;
-				case MAPA:
-					if (myFleet != null)
-						game.printMyBoard(false, true);
-					break;
-				case RAJADA:
-					if (game != null) {
-						// Jogador dispara contra a frota inimiga
-						game.readEnemyFire(in);
-						game.printAlienBoard(true, false);
-
-                        if (game.getAlienFleet().getFloatingShips().isEmpty()) {
-                            game.over();
-                            // ── Save WIN ──────────────────────────────────────
-                            Scoreboard.saveResult(
-                                new GameResult(playerName, game.getMyMoves().size(), true));
-                            System.out.println("Podes usar 'gerareport' ou 'ranking' antes de saíres.");
-                            lastGame = game; game = null; myFleet = null;
-                            break;
-
-                        }
-
-                        System.out.print("> rajada inimiga ");
-                        game.readAlienFire(in);
-                        myFleet.printStatus();
-                        game.printMyBoard(true, false);
-
-                        if (game.getRemainingShips() == 0) {
-                            game.over();
-                            // ── Save LOSS ─────────────────────────────────────
-                            Scoreboard.saveResult(
-                                new GameResult(playerName, game.getMyMoves().size(), false));
-                            System.out.println("Podes usar 'gerareport' ou 'ranking' antes de saíres.");
-                            lastGame = game; game = null; myFleet = null;
-                        }
-                    }
-                    break;
-
-                case SIMULA:
-                    if (game != null) {
-                        while (game.getRemainingShips() > 0
-                                && !game.getAlienFleet().getFloatingShips().isEmpty()) {
-
-                            game.randomPlayerFire();
-                            game.printAlienBoard(true, false);
-
-                            if (game.getAlienFleet().getFloatingShips().isEmpty()) break;
-
-                            game.randomEnemyFire();
-                            myFleet.printStatus();
-                            game.printMyBoard(true, false);
-
-                            try {
-                                Thread.sleep(3000);
-                            } catch (InterruptedException e) {
-                                Thread.currentThread().interrupt();
-                            }
-                        }
-
-                        boolean won = game.getAlienFleet().getFloatingShips().isEmpty();
-                        game.over();
-                        Scoreboard.saveResult(
-                            new GameResult(playerName, game.getMyMoves().size(), won));
-                        System.out.println("Podes usar 'gerareport' ou 'ranking' antes de saíres.");
-                        lastGame = game; game = null; myFleet = null;
-                    }
-                    break;
-
-                case TIROS:
-                    if (game != null) game.printMyBoard(true, true);
-                    break;
-
-                // ── Scoreboard command (NEW) ──────────────────────────────────
-                case RANKING:
-                    Scoreboard.interactiveDisplay(in);
-                    break;
-
-                // ── Set player name command ───────────────────────────────────
-                case NOME:
-                    System.out.print("Novo nome de navegador: ");
-                    in.nextLine(); // consume leftover newline after in.next()
-                    String nome = in.hasNextLine() ? in.nextLine().trim() : "";
-                    if (!nome.isEmpty()) {
-                        playerName = nome;
-                        System.out.println("Nome actualizado para: Capitão " + playerName);
-                    } else {
-                        System.out.println("Nome não alterado (continua: " + playerName + ")");
-                    }
-                    break;
-
-                case GERAREPORT:
-                    Game reportGame = (game != null) ? game : lastGame;
-                    if (reportGame != null) {
-                        PdfExporter.exportGameReport(reportGame, "report.pdf");
-                    } else {
-                        System.out.println("O jogo ainda não começou. Usa o comando 'gerafrota' primeiro.");
-                    }
-                    break;
-
-                case AJUDA:
-                    menuHelp();
-                    break;
-
-                default:
-                    System.out.println("Que comando é esse??? Repete ...");
-            }
-
+        System.out.print("> ");
+        String command = in.next();
+        while (!command.equals(DESISTIR)) {
+            processCommand(command, session, in);
             System.out.print("> ");
             command = in.next();
         }
         System.out.println(GOODBYE_MESSAGE);
     }
 
+    /**
+     * Processa comandos isolados. Extraído para reduzir a Complexidade Cognitiva.
+     */
+    private static void processCommand(String command, GameSession session, Scanner in) {
+        switch (command) {
+            case GERAFROTA:
+                session.myFleet = Fleet.createRandom();
+                session.game = new Game(session.myFleet);
+                session.game.printMyBoard(false, true);
+                break;
+            case LEFROTA:
+                session.myFleet = buildFleet(in);
+                session.game = new Game(session.myFleet);
+                session.game.printMyBoard(false, true);
+                break;
+            case STATUS:
+                if (session.myFleet != null) session.myFleet.printStatus();
+                break;
+            case MAPA:
+                if (session.game != null) session.game.printMyBoard(false, true);
+                break;
+            case RAJADA:
+                handleRajada(session, in);
+                break;
+            case SIMULA:
+                handleSimula(session);
+                break;
+            case TIROS:
+                if (session.game != null) session.game.printMyBoard(true, true);
+                break;
+            case RANKING:
+                Scoreboard.interactiveDisplay(in);
+                break;
+            case NOME:
+                handleNome(in);
+                break;
+            case GERAREPORT:
+                handleReport(session);
+                break;
+            case AJUDA:
+                menuHelp();
+                break;
+            default:
+                System.out.println("Que comando é esse??? Repete ...");
+        }
+    }
+
+    private static void handleNome(Scanner in) {
+        System.out.print("Novo nome de navegador: ");
+        in.nextLine(); // consume leftover newline after in.next()
+        String nome = in.hasNextLine() ? in.nextLine().trim() : "";
+        if (!nome.isEmpty()) {
+            playerName = nome;
+            System.out.println("Nome actualizado para: Capitão " + playerName);
+        } else {
+            System.out.println("Nome não alterado (continua: " + playerName + ")");
+        }
+    }
+
+    private static void handleReport(GameSession session) {
+        Game reportGame = (session.game != null) ? session.game : session.lastGame;
+        if (reportGame != null) {
+            PdfExporter.exportGameReport(reportGame, "report.pdf");
+        } else {
+            System.out.println("O jogo ainda não começou. Usa o comando 'gerafrota' primeiro.");
+        }
+    }
+
+    private static void handleRajada(GameSession session, Scanner in) {
+        // --- CORREÇÃO SONARQUBE: Validação para NullPointerException (Game e Fleet) ---
+        if (session.game == null || session.myFleet == null) return;
+
+        session.game.readEnemyFire(in);
+        session.game.printAlienBoard(true, false);
+
+        if (session.game.getAlienFleet().getFloatingShips().isEmpty()) {
+            session.game.over();
+            Scoreboard.saveResult(new GameResult(playerName, session.game.getMyMoves().size(), true));
+            System.out.println("Podes usar 'gerareport' ou 'ranking' antes de saíres.");
+            session.lastGame = session.game;
+            session.game = null;
+            session.myFleet = null;
+            return;
+        }
+
+        System.out.print("> rajada inimiga ");
+        session.game.readAlienFire(in);
+        session.myFleet.printStatus();
+        session.game.printMyBoard(true, false);
+
+        if (session.game.getRemainingShips() == 0) {
+            session.game.over();
+            Scoreboard.saveResult(new GameResult(playerName, session.game.getMyMoves().size(), false));
+            System.out.println("Podes usar 'gerareport' ou 'ranking' antes de saíres.");
+            session.lastGame = session.game;
+            session.game = null;
+            session.myFleet = null;
+        }
+    }
+
+    private static void handleSimula(GameSession session) {
+        // --- CORREÇÃO SONARQUBE: Validação para NullPointerException (Game e Fleet) ---
+        if (session.game == null || session.myFleet == null) return;
+
+        while (session.game.getRemainingShips() > 0 && !session.game.getAlienFleet().getFloatingShips().isEmpty()) {
+            session.game.randomPlayerFire();
+            session.game.printAlienBoard(true, false);
+
+            if (session.game.getAlienFleet().getFloatingShips().isEmpty()) break;
+
+            session.game.randomEnemyFire();
+            session.myFleet.printStatus();
+            session.game.printMyBoard(true, false);
+
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        boolean won = session.game.getAlienFleet().getFloatingShips().isEmpty();
+        session.game.over();
+        Scoreboard.saveResult(new GameResult(playerName, session.game.getMyMoves().size(), won));
+        System.out.println("Podes usar 'gerareport' ou 'ranking' antes de saíres.");
+        session.lastGame = session.game;
+        session.game = null;
+        session.myFleet = null;
+    }
 
     /**
      * This function provides help information about the menu commands.
@@ -231,8 +249,7 @@ public class Tasks {
      * @return The fleet that has been built
      */
     public static Fleet buildFleet(Scanner in) {
-
-        assert in != null;
+        if (in == null) throw new IllegalArgumentException("Scanner cannot be null");
 
         Fleet fleet = new Fleet();
         int i = 0;
@@ -259,8 +276,7 @@ public class Tasks {
      * @return The created ship based on the data that has been read
      */
     public static Ship readShip(Scanner in) {
-
-        assert in != null;
+        if (in == null) throw new IllegalArgumentException("Scanner cannot be null");
 
         String shipKind = in.next();
         Position pos    = readPosition(in);
@@ -276,8 +292,7 @@ public class Tasks {
      * @return The position that has been read
      */
     public static Position readPosition(Scanner in) {
-
-        assert in != null;
+        if (in == null) throw new IllegalArgumentException("Scanner cannot be null");
 
         int row    = in.nextInt();
         int column = in.nextInt();
