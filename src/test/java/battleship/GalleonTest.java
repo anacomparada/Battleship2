@@ -19,7 +19,7 @@ import java.util.List;
  * - getLeftMostPos: 2
  * - getRightMostPos: 2
  */
-public class GalleonTest {
+class GalleonTest {
 
 	private Galleon galleon;
 
@@ -79,8 +79,10 @@ public class GalleonTest {
 	 */
 	@Test
 	void testStillFloating2() {
-		galleon.getPositions().forEach(pos -> pos.shoot());
-		assertFalse(galleon.stillFloating(), "Error: Galleon should not float when all positions are hit.");
+		galleon.getPositions().forEach(IPosition::shoot);
+
+		assertFalse(galleon.stillFloating(),
+				"Error: Galleon should not float when all positions are hit.");
 	}
 
 	/**
