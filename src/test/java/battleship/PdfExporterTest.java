@@ -3,15 +3,12 @@ package battleship;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
@@ -22,27 +19,9 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PdfExporterTest {
-    private PdfExporter pdfExporter;
-
-    @BeforeEach
-    void setUp() {
-        // Instancia a classe sob teste (mesmo sendo maioritariamente estática, cumprimos o requisito de cobertura)
-        pdfExporter = new PdfExporter();
-    }
-
-    @AfterEach
-    void tearDown() {
-        // Limpa e anula a instância
-        pdfExporter = null;
-    }
+class PdfExporterTest {
 
     // --- TESTES DE CONSTRUTORES (CC: 1) ---
-
-    @Test
-    void testPdfExporterConstructor() {
-        assertNotNull(pdfExporter, "Error: expected PdfExporter instance to be initialized");
-    }
 
     @Test
     void testPdfStateConstructor() throws Exception {
@@ -160,7 +139,7 @@ public class PdfExporterTest {
 
     @Test
     void testPrintMoveSection_Outcome_Hit() throws Exception {
-           Map<String, Object> shipMap = new HashMap<>();
+        Map<String, Object> shipMap = new HashMap<>();
         shipMap.put("getCategory", "Porta-Aviões");
         IShip mockShip = mockInterface(IShip.class, shipMap);
 
@@ -209,8 +188,29 @@ public class PdfExporterTest {
         }
     }
 
+    @Test
+    void testPrivateConstructor() throws Exception {
+        // 1. Obtém o construtor sem argumentos da classe
+        Constructor<PdfExporter> constructor = PdfExporter.class.getDeclaredConstructor();
+
+        // 2. Torna o construtor privado acessível para este teste
+        constructor.setAccessible(true);
+
+        // 3. Tenta criar uma nova instância e captura a exceção resultante
+        // --- CORREÇÃO SONARQUBE: Lambda substituída por method reference (constructor::newInstance) ---
+        InvocationTargetException exception = assertThrows(InvocationTargetException.class,
+                constructor::newInstance,
+                "Error: expected InvocationTargetException when invoking private constructor");
+
+        // 4. O Reflection "embrulha" a exceção original num InvocationTargetException.
+        // Temos de extrair a verdadeira causa e verificar se é a nossa IllegalStateException
+        Throwable cause = exception.getCause();
+        assertTrue(cause instanceof IllegalStateException, "Error: expected cause to be IllegalStateException");
+        assertEquals("Utility class", cause.getMessage(), "Error: unexpected exception message");
+    }
+
     // =========================================================================
-    // MÉTODOS AUXILIARES (Reflection e Mocking em Java Puro - Sem Mockito)
+    // MÉTODOS AUXILIARES
     // =========================================================================
 
     /**

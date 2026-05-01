@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.util.List;
 
 public class PdfExporter {
-
+    private PdfExporter() {
+        throw new IllegalStateException("Utility class");
+    }
     /**
      * Classe interna auxiliar para guardar o estado da página e da posição Y
      * enquanto mudamos de página dinamicamente.
