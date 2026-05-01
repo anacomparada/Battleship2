@@ -9,3 +9,14 @@
 | Game::buildMap / Game::printBoard / Game::fireShots / Game::fireSingleShot | Data Flow & Redundancy | Replace assert with proper check (if + throw `IllegalArgumentException`) | 93263 |
 | Game::jsonShots | Inappropriate Intimacy | Replace generic exception (`RuntimeException` → `IllegalStateException`) | 93263 |
 | Game::generateShots | Long Method | Extract Method (`fillShotsRandomly()`, `fillShotsFromCandidates()`, `padShots()`) | 93263 |
+| BoardWindow::createBoardPanel | Long Method | Extract Method (addRow, createCell, applyCellColor, highlightRecentShot) | 123762 |
+| BoardWindow | Data Class / Utility Smell | Create Constructor (Private constructor) | 123762 |
+| BoardWindow::applyCellColor | Switch Statements | Replace If-Else with Switch | 123762 | 
+| BoardWindow::show | Improper Static Access | Static access via type (JFrame constants) | 123762 | 
+| CaravelTest | Assertion Roulette | Assertion Grouping (assertAll) | 123762 | 
+| Ship, Ship::buildShip | Defensive Programming | Replace assert with check (Objects.requireNonNull / IllegalArgumentException) | 123762 | 
+| Position::randomPosition | Magic Number | Replace Math.random with Random.nextInt | 123762 | 
+| Position::equals | Feature Envy | Pattern Matching for instanceof | 123762 | 
+| ShipTest, PositionTest | Redundant Code | Replace Lambda with Method Reference | 123762 | 
+| BargeTest, BoardWindowTest | Excessive Visibility | Change Visibility (Remoção do public) | 123762 | 
+| Carrack, Ship | Dead Code | Optimize Imports / Remove Unused | 123762 |
