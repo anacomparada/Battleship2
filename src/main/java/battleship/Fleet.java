@@ -11,6 +11,15 @@ import java.util.List;
  */
 public class Fleet implements IFleet
 {
+	// Extração do Magic Array para uma constante
+	private static final String[] DEFAULT_SHIP_TYPES = {
+			"galeao",                           // 1 galleon
+			"fragata",                          // 1 frigate
+			"nau", "nau",                       // 2 carracks
+			"caravela", "caravela", "caravela", // 3 caravels
+			"barca", "barca", "barca", "barca"  // 4 barges
+	};
+
 	/**
 	 * Creates a randomly generated fleet containing ships of various predefined types.
 	 * Each ship is assigned a random bearing and position. If a ship cannot be added
@@ -21,21 +30,12 @@ public class Fleet implements IFleet
 	public static IFleet createRandom() {
 
 		Fleet randomFleet = new Fleet();
-
-		// Define the types of ships to be added
-		String[] shipTypes =
-					{"galeao",                           // 1 galleon
-				 	"fragata",                           // 1 frigate
- 				 	"nau", "nau",                        // 2 carracks
-					"caravela", "caravela", "caravela",  // 3 caravels
-					"barca", "barca", "barca", "barca"}; // 4 barges
-
 		int fleetSize = 0;
 
-		while (fleetSize < shipTypes.length) {
+		while (fleetSize < DEFAULT_SHIP_TYPES.length) {
 
 			// Build the ship
-			Ship ship = Ship.buildShip(shipTypes[fleetSize], Compass.randomBearing(), Position.randomPosition());
+			Ship ship = Ship.buildShip(DEFAULT_SHIP_TYPES[fleetSize], Compass.randomBearing(), Position.randomPosition());
 
 			// Attempt to add the ship to the fleet
 			if (ship != null && randomFleet.addShip(ship)) {
@@ -79,15 +79,12 @@ public class Fleet implements IFleet
 	 * @param s the s
 	 * @return the boolean
 	 */
-	/*
-     * (non-Javadoc)
-     * 
-     * @see battleship.IFleet#addShip(battleship.IShip)
-     */
     @Override
     public boolean addShip(IShip s)
     {
-		assert s != null;
+		if (s == null) {
+			throw new IllegalArgumentException("Ship cannot be null");
+		}
 
 		boolean result = false;
 		if ((ships.size() <= FLEET_SIZE) && (isInsideBoard(s)) && (!colisionRisk(s)))
@@ -104,15 +101,12 @@ public class Fleet implements IFleet
 	 * @param category the category
 	 * @return the ships like
 	 */
-	/*
-     * (non-Javadoc)
-     * 
-     * @see battleship.IFleet#getShipsLike(java.lang.String)
-     */
     @Override
     public List<IShip> getShipsLike(String category)
     {
-		assert category != null;
+		if (category == null) {
+			throw new IllegalArgumentException("Category cannot be null");
+		}
 
 		List<IShip> shipsLike = new ArrayList<>();
 		for (IShip s : ships)
@@ -127,15 +121,10 @@ public class Fleet implements IFleet
 	 *
 	 * @return the floating ships
 	 */
-	/*
-     * (non-Javadoc)
-     * 
-     * @see battleship.IFleet#getFloatingShips()
-     */
     @Override
     public List<IShip> getFloatingShips()
     {
-		List<IShip> floatingShips = new ArrayList<IShip>();
+		List<IShip> floatingShips = new ArrayList<>();
 		for (IShip s : ships)
 			if (s.stillFloating())
 				floatingShips.add(s);
@@ -148,15 +137,10 @@ public class Fleet implements IFleet
 	 *
 	 * @return the sunk ships
 	 */
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see battleship.IFleet#getSunkShips()
-	 */
 	@Override
 	public List<IShip> getSunkShips()
 	{
-		List<IShip> sunkShips = new ArrayList<IShip>();
+		List<IShip> sunkShips = new ArrayList<>();
 		for (IShip s : ships)
 			if (!s.stillFloating())
 				sunkShips.add(s);
@@ -170,15 +154,12 @@ public class Fleet implements IFleet
 	 * @param pos the pos
 	 * @return the ship
 	 */
-	/*
-     * (non-Javadoc)
-     * 
-     * @see battleship.IFleet#shipAt(battleship.IPosition)
-     */
     @Override
     public IShip shipAt(IPosition pos)
     {
-		assert pos != null;
+		if (pos == null) {
+			throw new IllegalArgumentException("Position cannot be null");
+		}
 
 		for (IShip ship : ships)
 			if (ship.occupies(pos))
@@ -194,7 +175,9 @@ public class Fleet implements IFleet
 	 */
 	private boolean isInsideBoard(IShip s)
     {
-		assert s != null;
+		if (s == null) {
+			throw new IllegalArgumentException("Ship cannot be null");
+		}
 
 		return (s.getLeftMostPos() >= 0 && s.getRightMostPos() <= Game.BOARD_SIZE - 1 && s.getTopMostPos() >= 0
 			&& s.getBottomMostPos() <= Game.BOARD_SIZE - 1);
@@ -208,12 +191,14 @@ public class Fleet implements IFleet
 	 */
 	private boolean colisionRisk(IShip s)
     {
-		assert s != null;
+		if (s == null) {
+			throw new IllegalArgumentException("Ship cannot be null");
+		}
 
-		for (int i = 0; i < ships.size(); i++)
-		{
-			if (ships.get(i).tooCloseTo(s))
+		for (IShip ship : ships) {
+			if (ship.tooCloseTo(s)) {
 				return true;
+			}
 		}
 		return false;
     }
@@ -225,7 +210,9 @@ public class Fleet implements IFleet
 	 */
 	public void printShips(List<IShip> ships)
 	{
-		assert ships != null;
+		if (ships == null) {
+			throw new IllegalArgumentException("List of ships cannot be null");
+		}
 
 		for (IShip ship : ships)
 			System.out.println(ship);
@@ -237,13 +224,6 @@ public class Fleet implements IFleet
 	public void printStatus()
     {
 		System.out.println("Estado da Frota: " + this.getFloatingShips().size() + " a flutuar, " + this.getSunkShips().size() + " afundados!");
-//		printAllShips();
-//		printFloatingShips();
-//		printShipsByCategory("Galeao");
-//		printShipsByCategory("Fragata");
-//		printShipsByCategory("Nau");
-//		printShipsByCategory("Caravela");
-//		printShipsByCategory("Barca");
     }
 
 	/**
@@ -254,7 +234,9 @@ public class Fleet implements IFleet
 	 */
 	public void printShipsByCategory(String category)
     {
-		assert category != null;
+		if (category == null) {
+			throw new IllegalArgumentException("Category cannot be null");
+		}
 
 		printShips(getShipsLike(category));
     }

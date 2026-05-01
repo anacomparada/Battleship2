@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * - colisionRisk: 2
  * - print methods: 1 to 2
  */
-public class FleetTest {
+class FleetTest {
 
     private Fleet fleet;
 
