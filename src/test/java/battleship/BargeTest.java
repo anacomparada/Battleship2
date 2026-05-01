@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * - getLeftMostPos: 1
  * - getRightMostPos: 1
  */
-public class BargeTest {
+class BargeTest {
 
 	private Barge barge;
 

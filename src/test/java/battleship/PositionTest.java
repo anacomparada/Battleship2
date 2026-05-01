@@ -23,7 +23,8 @@ import java.util.List;
  * - hashCode: 1
  * - toString: 1
  */
-public class PositionTest {
+class PositionTest {
+
 	private Position position;
 
 	@BeforeEach
@@ -36,9 +37,6 @@ public class PositionTest {
 		position = null;
 	}
 
-	// ---------------------------------------------------------------
-	// Constructor (int, int)
-	// ---------------------------------------------------------------
 
 	@Test
 	void constructor() {
@@ -50,9 +48,7 @@ public class PositionTest {
 		assertFalse(pos.isHit(), "New position should not be hit");
 	}
 
-	// ---------------------------------------------------------------
-	// Constructor (char, int)
-	// ---------------------------------------------------------------
+
 
 	@Test
 	void constructorClassic() {
@@ -71,9 +67,7 @@ public class PositionTest {
 		assertEquals(3, pos.getColumn(), "Column should be 3 for classic column 4");
 	}
 
-	// ---------------------------------------------------------------
-	// getRow / getColumn
-	// ---------------------------------------------------------------
+
 
 	@Test
 	void getRow() {
@@ -85,9 +79,7 @@ public class PositionTest {
 		assertEquals(3, position.getColumn(), "Failed to get column: expected 3 but got " + position.getColumn());
 	}
 
-	// ---------------------------------------------------------------
-	// getClassicRow / getClassicColumn
-	// ---------------------------------------------------------------
+
 
 	@Test
 	void getClassicRow() {
@@ -99,9 +91,7 @@ public class PositionTest {
 		assertEquals(4, position.getClassicColumn(), "Expected classic column 4 for column index 3");
 	}
 
-	// ---------------------------------------------------------------
-	// isInside
-	// ---------------------------------------------------------------
+
 
 	@Test
 	void isValid1() {
@@ -133,9 +123,6 @@ public class PositionTest {
 		assertFalse(position.isInside(), "Position with column >= BOARD_SIZE should be invalid");
 	}
 
-	// ---------------------------------------------------------------
-	// isAdjacentTo
-	// ---------------------------------------------------------------
 
 	@Test
 	void isAdjacentTo1() {
@@ -172,20 +159,15 @@ public class PositionTest {
 				"isAdjacentTo should throw NullPointerException for null input");
 	}
 
-	// ---------------------------------------------------------------
-	// adjacentPositions
-	// ---------------------------------------------------------------
 
 	@Test
 	void adjacentPositionsCenter() {
-		// position = (2,3) — away from all borders, should have 8 neighbours
 		List<IPosition> adj = position.adjacentPositions();
 		assertEquals(8, adj.size(), "Central position should have 8 adjacent positions");
 	}
 
 	@Test
 	void adjacentPositionsCorner() {
-		// Corner (0,0) — only 3 valid neighbours
 		Position corner = new Position(0, 0);
 		List<IPosition> adj = corner.adjacentPositions();
 		assertEquals(3, adj.size(), "Corner position should have 3 adjacent positions");
@@ -193,7 +175,6 @@ public class PositionTest {
 
 	@Test
 	void adjacentPositionsEdge() {
-		// Top edge, not a corner: (0,3) — 5 valid neighbours
 		Position edge = new Position(0, 3);
 		List<IPosition> adj = edge.adjacentPositions();
 		assertEquals(5, adj.size(), "Edge (non-corner) position should have 5 adjacent positions");
@@ -203,7 +184,7 @@ public class PositionTest {
 	void adjacentPositionsAllInsideBoard() {
 		List<IPosition> adj = position.adjacentPositions();
 		for (IPosition p : adj) {
-			assertTrue(((Position) p).isInside(), "All adjacent positions must be inside the board");
+			assertTrue(p.isInside(), "All adjacent positions must be inside the board");
 		}
 	}
 
@@ -213,9 +194,6 @@ public class PositionTest {
 		assertFalse(adj.contains(position), "adjacentPositions should not contain the position itself");
 	}
 
-	// ---------------------------------------------------------------
-	// randomPosition
-	// ---------------------------------------------------------------
 
 	@Test
 	void randomPosition() {
@@ -226,16 +204,12 @@ public class PositionTest {
 
 	@Test
 	void randomPositionMultipleCalls() {
-		// Ensures no call ever produces an out-of-bounds position
 		for (int i = 0; i < 100; i++) {
 			Position pos = Position.randomPosition();
 			assertTrue(pos.isInside(), "Random position must always be inside the board (iteration " + i + ")");
 		}
 	}
 
-	// ---------------------------------------------------------------
-	// isOccupied / occupy
-	// ---------------------------------------------------------------
 
 	@Test
 	void isOccupied() {
@@ -244,9 +218,7 @@ public class PositionTest {
 		assertTrue(position.isOccupied(), "Position should be occupied after occupy()");
 	}
 
-	// ---------------------------------------------------------------
-	// isHit / shoot
-	// ---------------------------------------------------------------
+
 
 	@Test
 	void isHit() {
@@ -255,57 +227,50 @@ public class PositionTest {
 		assertTrue(position.isHit(), "Position should be hit after shoot()");
 	}
 
-	// ---------------------------------------------------------------
-	// equals
-	// ---------------------------------------------------------------
 
 	@Test
 	void equals1() {
 		Position same = new Position(2, 3);
-		assertTrue(position.equals(same), "Equal positions not identified as equal");
+		assertEquals(same, position, "Equal positions not identified as equal"); // ✅ corrigido
 	}
 
 	@Test
 	void equals2() {
-		assertFalse(position.equals(null), "Position should not equal null");
+		assertNotEquals(null, position, "Position should not equal null");
 	}
 
 	@Test
 	void equals3() {
 		Object other = new Object();
-		assertFalse(position.equals(other), "Position should not equal non-Position object");
+		assertNotEquals(position, other, "Position should not equal non-Position object");
 	}
 
 	@Test
 	void equals4() {
 		Position other = new Position(2, 4);
-		assertFalse(position.equals(other), "Positions with same row but different column should not be equal");
+		assertNotEquals(position, other, "Positions with same row but different column should not be equal");
 	}
 
 	@Test
 	void equals5() {
-		assertTrue(position.equals(position), "A position should be equal to itself");
+		assertEquals(position, position, "A position should be equal to itself");
 	}
 
 	@Test
 	void equalsIgnoresOccupiedAndHitState() {
-		// equals is based only on row/column, not state
 		Position other = new Position(2, 3);
 		other.occupy();
 		other.shoot();
-		assertTrue(position.equals(other),
-				"Positions with same coordinates should be equal regardless of occupied/hit state");
+		assertEquals(other, position,
+				"Positions with same coordinates should be equal regardless of occupied/hit state"); // ✅ corrigido
 	}
 
-	// ---------------------------------------------------------------
-	// hashCode
-	// ---------------------------------------------------------------
 
 	@Test
 	void hashCodeConsistency() {
 		Position same = new Position(2, 3);
-		assertEquals(position.hashCode(), same.hashCode(),
-				"Hash codes should be consistent for positions with the same coordinates and state");
+		assertEquals(same.hashCode(), position.hashCode(),
+				"Hash codes should be consistent for positions with the same coordinates and state"); // ✅ corrigido
 	}
 
 	@Test
@@ -315,10 +280,6 @@ public class PositionTest {
 				"Different positions should typically have different hash codes");
 	}
 
-	// ---------------------------------------------------------------
-	// toString
-	// ---------------------------------------------------------------
-
 	@Test
 	void toStringFormat() {
 		String expected = "C4";
@@ -326,5 +287,4 @@ public class PositionTest {
 				"Incorrect string representation: expected '" + expected +
 						"' but got '" + position.toString() + "'");
 	}
-
 }
