@@ -3,6 +3,7 @@ package battleship;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 /**
  * Represents a position on the game board.
@@ -10,6 +11,11 @@ import java.util.Objects;
  * and it can be occupied or hit during the game.
  */
 public class Position implements IPosition {
+
+	/**
+	 * Random generator for positions.
+	 */
+	private static final Random RANDOM = new Random();
 
 	/**
 	 * The row coordinate of the position.
@@ -32,12 +38,18 @@ public class Position implements IPosition {
 	private boolean isHit;
 
 	//------------------------------------------------------------------
+
+	/**
+	 * Generates a random position within the board limits.
+	 *
+	 * @return a random valid position
+	 */
 	public static Position randomPosition() {
-		// Generate random position on the board
-		int row = (int) (Math.random() * Game.BOARD_SIZE);
-		int col = (int) (Math.random() * Game.BOARD_SIZE);
-		return new Position(row, col);
+		int randomRow = RANDOM.nextInt(Game.BOARD_SIZE);
+		int randomColumn = RANDOM.nextInt(Game.BOARD_SIZE);
+		return new Position(randomRow, randomColumn);
 	}
+
 	/**
 	 * Constructs a new Position with the specified row and column.
 	 * By default, the position is not occupied and not hit.
@@ -47,7 +59,7 @@ public class Position implements IPosition {
 	 */
 	public Position(char classicRow, int classicColumn) {
 		this.row = Character.toUpperCase(classicRow) - 'A';
-		this.column = classicColumn-1;
+		this.column = classicColumn - 1;
 		this.isOccupied = false;
 		this.isHit = false;
 	}
@@ -103,6 +115,7 @@ public class Position implements IPosition {
 	public int getClassicColumn() {
 		return column + 1;
 	}
+
 	/**
 	 * Checks if this position is valid on the game board.
 	 * A position is "inside" if its row and column are within the board's boundaries.
@@ -121,41 +134,45 @@ public class Position implements IPosition {
 	 * @param other the other position to compare
 	 * @return true if the positions are adjacent, false otherwise
 	 */
-
 	@Override
 	public boolean isAdjacentTo(IPosition other) {
-		return Math.abs(this.row - other.getRow()) <= 1 && Math.abs(this.column - other.getColumn()) <= 1;
+		return Math.abs(row - other.getRow()) <= 1 &&
+				Math.abs(column - other.getColumn()) <= 1;
 	}
 
-
 	/**
-	 * Returns all valid adjacent positions (up, right, down, left) for this position.
+	 * Returns all valid adjacent positions (up, right, down, left and diagonals).
 	 * A valid position is one that exists within the board boundaries.
+	 *
 	 * @return List of valid adjacent positions
 	 */
 	@Override
 	public List<IPosition> adjacentPositions() {
 
-		List<IPosition> adjacents = new ArrayList<IPosition>();
+		List<IPosition> adjacents = new ArrayList<>();
 
-		int row = this.getRow();
-		int col = this.getColumn();
+		int currentRow = this.getRow();
+		int currentColumn = this.getColumn();
 
-		// Define possible directions (up, right, down, left)
+		// Define possible directions
 		int[][] directions = {
-				{-1, 0},  // north
-				{0, 1},   // east
-				{1, 0},   // south
+				{-1, 0},   // north
+				{0, 1},    // east
+				{1, 0},    // south
 				{0, -1},   // west
-				{1, 1},   // northeast
-				{1, -1},  // northwest
-				{-1, 1},  // southeast
-				{-1, -1} // southwest
+				{1, 1},    // northeast
+				{1, -1},   // northwest
+				{-1, 1},   // southeast
+				{-1, -1}   // southwest
 		};
 
 		// Check each possible direction
 		for (int[] dir : directions) {
-			Position newPosition = new Position(row + dir[0], col + dir[1]);
+			Position newPosition = new Position(
+					currentRow + dir[0],
+					currentColumn + dir[1]
+			);
+
 			// Only add the position if it's inside the board boundaries
 			if (newPosition.isInside()) {
 				adjacents.add(newPosition);
@@ -213,10 +230,11 @@ public class Position implements IPosition {
 		if (this == otherPosition) {
 			return true;
 		}
-		if (otherPosition instanceof IPosition) {
-			IPosition other = (IPosition) otherPosition;
+
+		if (otherPosition instanceof IPosition other) {
 			return this.row == other.getRow() && this.column == other.getColumn();
 		}
+
 		return false;
 	}
 
@@ -239,6 +257,5 @@ public class Position implements IPosition {
 	@Override
 	public String toString() {
 		return (char) ('A' + row) + "" + (column + 1);
-//		return "Row = " + (char) ('A' + row) + ", Column = " + (column + 1);
 	}
 }
