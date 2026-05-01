@@ -9,14 +9,23 @@
 | Game::buildMap / Game::printBoard / Game::fireShots / Game::fireSingleShot | Data Flow & Redundancy | Replace assert with proper check (if + throw `IllegalArgumentException`) | 93263 |
 | Game::jsonShots | Inappropriate Intimacy | Replace generic exception (`RuntimeException` → `IllegalStateException`) | 93263 |
 | Game::generateShots | Long Method | Extract Method (`fillShotsRandomly()`, `fillShotsFromCandidates()`, `padShots()`) | 93263 |
-| BoardWindow::createBoardPanel | Long Method | Extract Method (addRow, createCell, applyCellColor, highlightRecentShot) | 123762 |
-| BoardWindow | Data Class / Utility Smell | Create Constructor (Private constructor) | 123762 |
-| BoardWindow::applyCellColor | Switch Statements | Replace If-Else with Switch | 123762 | 
-| BoardWindow::show | Improper Static Access | Static access via type (JFrame constants) | 123762 | 
-| CaravelTest | Assertion Roulette | Assertion Grouping (assertAll) | 123762 | 
-| Ship, Ship::buildShip | Defensive Programming | Replace assert with check (Objects.requireNonNull / IllegalArgumentException) | 123762 | 
-| Position::randomPosition | Magic Number | Replace Math.random with Random.nextInt | 123762 | 
-| Position::equals | Feature Envy | Pattern Matching for instanceof | 123762 | 
-| ShipTest, PositionTest | Redundant Code | Replace Lambda with Method Reference | 123762 | 
-| BargeTest, BoardWindowTest | Excessive Visibility | Change Visibility (Remoção do public) | 123762 | 
-| Carrack, Ship | Dead Code | Optimize Imports / Remove Unused | 123762 |
+| BargeTest, BoardWindowTest, CarrackTest, FrigateTest, GalleonTest, PositionTest, ShipTest | Excessive Visibility | Change Visibility: Remoção do modificador public | 123762 |
+| BoardWindow | Improper Static Access | Use Static Access: Acesso via WindowConstants | 123762 | 
+| BoardWindow | Complex Method | Extract Method / Refactor: Redução da Complexidade Cognitiva | 123762 | 
+| BoardWindow | Utility Class Smell | Hide Utility Constructor: Adição de construtor privado | 123762 | 
+| BoardWindowTest, CarrackTest, GalleonTest | Redundant Code | Replace Lambda with Method Reference | 123762 | 
+| BoardWindowTest, Carrack | Unused Imports | Optimize Imports: Remoção de bibliotecas não utilizadas | 123762 | 
+| CaravelTest, CarrackTest, ShipTest | Assertion Roulette | Refactor Lambda: Apenas uma invocação no assertThrows | 123762 |
+| Position, Ship | Primitive Obsession | Use Diamond Operator: Substituição por <> | 123762 | 
+| Position | Math Smell | Use Dedicated Random: Substituição por nextInt() | 123762 | 
+| Position | Variable Shadowing | Rename Variable: Evitar ocultação de campos de classe | 123762 | 
+| Position | Feature Envy | Pattern Matching for instanceof: Simplificar verificação e cast | 123762 | 
+| Position | Commented-out Code | Safe Delete: Remoção de código comentado | 123762 | 
+| PositionTest | Boolean Assertion Simplification | Simplify Assertion: Uso de assertEquals / assertNotEquals | 123762 | 
+| CaravelTest, ShipTest, PositionTest | Assertion Roulette | Assertion Grouping: Uso de assertAll | 123762 | 
+| Ship | Redundant Assignment | Remove Redundant Assignment: Eliminar atribuições inúteis | 123762 | 
+| Ship | Improper Indentation | Reformat Code: Indentação correta de blocos | 123762 | 
+| Ship | Abstract Constructor Visibility | Change Visibility: Alterar para protected | 123762 | 
+| Ship | Defensive Programming Smell | Replace Assert: Uso de verificações formais e exceções | 123762 | 
+| Ship | Duplicated Code | Introduce Constant: Para literais de String repetidos | 123762 | 
+| PositionTest | Assertion Arguments Order | Swap Assertion Arguments: Corrigir ordem esperado/atual | 123762 |
