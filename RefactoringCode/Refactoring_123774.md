@@ -6,3 +6,7 @@
 | Fleet::colisionRisk | Naming Convention | Rename (`colisionRisk` → `collisionRisk`) | 123774 |
 | Fleet::printStatus | Comments (Dead Code) | Remove code / Delete commented lines | 123774 |
 | PdfExporter | Bad Practice (Utility Class) / Encapsulation | Add Private Constructor | 123774 |
+| Tasks | Bad Practice (Utility Class) / Encapsulation | Add Private Constructor | 123774 |
+| Tasks::menu | Long Method / Brain Method | Extract Method (`processCommand`, `handleRajada`, `handleSimula`, etc.) e Extract Class (`GameSession`) | 123774 |
+| Tasks::handleRajada / Tasks::handleSimula | Null Dereference Risk | Add Null Check (`!= null`) | 123774 |
+| Tasks::buildFleet / Tasks::readShip / Tasks::readPosition | Data Flow & Redundancy | Replace assert with proper check (if + throw `IllegalArgumentException`) | 123774 |
