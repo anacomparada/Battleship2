@@ -22,7 +22,7 @@ import java.util.List;
  * - getLeftMostPos: 2
  * - getRightMostPos: 2
  */
-public class CarrackTest {
+class CarrackTest {
 
     private Carrack carrack;
 
@@ -135,8 +135,9 @@ public class CarrackTest {
      */
     @Test
     void testStillFloating3() {
-        carrack.getPositions().forEach(position -> position.shoot());
-        assertFalse(carrack.stillFloating(), "Error: Carrack should not be floating when all positions are hit.");
+        carrack.getPositions().forEach(IPosition::shoot);
+        assertFalse(carrack.stillFloating(),
+                "Error: Carrack should not be floating when all positions are hit.");
     }
 
     /**
@@ -197,9 +198,14 @@ public class CarrackTest {
      */
     @Test
     void testConstructorWithInvalidInput() {
-        assertThrows(NullPointerException.class, () -> new Carrack(null, new Position(5, 5)),
+        Position position = new Position(5, 5);
+
+        assertThrows(NullPointerException.class,
+                () -> new Carrack(null, position),
                 "Error: Should throw NullPointerException for null bearing.");
-        assertThrows(NullPointerException.class, () -> new Carrack(Compass.NORTH, null),
+
+        assertThrows(NullPointerException.class,
+                () -> new Carrack(Compass.NORTH, null),
                 "Error: Should throw NullPointerException for null position.");
     }
 }
