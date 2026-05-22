@@ -181,24 +181,32 @@
 			<id>anacomparada</id>
 			<name>Ana Comparada Reganha</name>
 			<email>ana.reganha@iscte-iul.pt</email>
+			<url>https://github.com/anacomparada</url>
+			<organization>LIGE-PL 123774</organization>
 			<roles><role>Developer</role></roles>
 		</developer>
 		<developer>
 			<id>dpsoares</id>
 			<name>Diogo Soares</name>
 			<email>diogo.soares@iscte-iul.pt</email>
+			<url>https://github.com/dpsoares</url>
+			<organization>LIGE-PL 93263</organization>
 			<roles><role>Developer</role></roles>
 		</developer>
 		<developer>
 			<id>IGE-123762</id>
 			<name>Rodrigo Couceiro</name>
 			<email>rodrigo.couceiro@iscte-iul.pt</email>
+			<url>https://github.com/IGE-123762</url>
+			<organization>LIGE-PL 123762</organization>
 			<roles><role>Developer</role></roles>
 		</developer>
 		<developer>
 			<id>IGE-111561</id>
 			<name>Tiago Bensusan</name>
 			<email>tiago.bensusan@iscte-iul.pt</email>
+			<url>https://github.com/IGE-111561</url>
+			<organization>LIGE-PL 111561</organization>
 			<roles><role>Developer</role></roles>
 		</developer>
 	</developers>
