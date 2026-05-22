@@ -18,8 +18,8 @@ public class Tasks {
     /**
      * The constant LOGGER.
      */
-    private static final Logger LOGGER = LogManager.getLogger();
-
+    //private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger(Tasks.class);
     /**
      * The constant GOODBYE_MESSAGE.
      */
