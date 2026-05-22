@@ -154,6 +154,53 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<!-- Maven Site -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.12.1</version>
+				<configuration>
+					<outputDirectory>${project.basedir}/docs</outputDirectory>
+				</configuration>
+			</plugin>
+			<!-- Javadoc -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.6.3</version>
+				<configuration>
+					<reportOutputDirectory>${project.basedir}/docs/apidocs</reportOutputDirectory>
+					<destDir>.</destDir>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
+
+	<developers>
+		<developer>
+			<id>anacomparada</id>
+			<name>Ana Comparada Reganha</name>
+			<email>ana.reganha@iscte-iul.pt</email>
+			<roles><role>Developer</role></roles>
+		</developer>
+		<developer>
+			<id>dpsoares</id>
+			<name>Diogo Soares</name>
+			<email>diogo.soares@iscte-iul.pt</email>
+			<roles><role>Developer</role></roles>
+		</developer>
+		<developer>
+			<id>IGE-123762</id>
+			<name>Rodrigo Couceiro</name>
+			<email>rodrigo.couceiro@iscte-iul.pt</email>
+			<roles><role>Developer</role></roles>
+		</developer>
+		<developer>
+			<id>IGE-111561</id>
+			<name>Tiago Bensusan</name>
+			<email>tiago.bensusan@iscte-iul.pt</email>
+			<roles><role>Developer</role></roles>
+		</developer>
+	</developers>
+
 </project>
