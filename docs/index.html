@@ -17,7 +17,6 @@
         a { color: #185FA5; text-decoration: none; }
         a:hover { text-decoration: underline; }
 
-        /* Hero */
         .hero {
           background: #0c1a2e;
           color: #e6f1fb;
@@ -27,14 +26,10 @@
         .hero h1 { font-size: 2.8rem; font-weight: 600; margin-bottom: 0.5rem; }
         .hero p { font-size: 1.1rem; color: #85b7eb; max-width: 600px; margin: 0 auto 1.5rem; }
         .badges { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-        .badge {
-          padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;
-          background: #185FA5; color: #e6f1fb;
-        }
+        .badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; background: #185FA5; color: #e6f1fb; }
         .badge.green { background: #3B6D11; color: #EAF3DE; }
         .badge.gray { background: #444441; color: #D3D1C7; }
 
-        /* Nav */
         nav {
           background: #fff;
           border-bottom: 1px solid #e5e3dc;
@@ -50,7 +45,6 @@
         }
         nav a:hover { color: #185FA5; border-color: #185FA5; text-decoration: none; }
 
-        /* Layout */
         .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
 
         section { margin-bottom: 3rem; }
@@ -63,28 +57,14 @@
         }
         h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: #2C2C2A; }
 
-        /* Team table */
         table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        th {
-          background: #0c1a2e; color: #e6f1fb;
-          padding: 10px 14px; text-align: left; font-weight: 500;
-        }
+        th { background: #0c1a2e; color: #e6f1fb; padding: 10px 14px; text-align: left; font-weight: 500; }
         td { padding: 10px 14px; border-bottom: 1px solid #e5e3dc; }
         tr:last-child td { border-bottom: none; }
         tr:hover td { background: #f1efe8; }
 
-        /* Feature cards */
-        .features-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-          gap: 16px;
-        }
-        .feature-card {
-          background: #fff;
-          border: 1px solid #e5e3dc;
-          border-radius: 10px;
-          padding: 1.25rem;
-        }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+        .feature-card { background: #fff; border: 1px solid #e5e3dc; border-radius: 10px; padding: 1.25rem; }
         .feature-card h3 { font-size: 15px; margin-bottom: 6px; }
         .feature-card p { font-size: 13px; color: #5F5E5A; margin-bottom: 8px; }
         .status { font-size: 12px; font-weight: 500; padding: 2px 8px; border-radius: 12px; display: inline-block; }
@@ -92,37 +72,19 @@
         .status.wip  { background: #FAEEDA; color: #854F0B; }
         .status.todo { background: #FCEBEB; color: #A32D2D; }
 
-        /* Videos */
         .videos { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
-        .video-card {
-          background: #fff; border: 1px solid #e5e3dc; border-radius: 10px; overflow: hidden;
-        }
+        .video-card { background: #fff; border: 1px solid #e5e3dc; border-radius: 10px; overflow: hidden; }
         .video-card img { width: 100%; display: block; }
         .video-card p { padding: 12px; font-size: 14px; color: #2C2C2A; }
 
-        /* Stack pills */
         .stack { display: flex; flex-wrap: wrap; gap: 8px; }
-        .pill {
-          background: #E6F1FB; color: #0C447C;
-          padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 500;
-        }
+        .pill { background: #E6F1FB; color: #0C447C; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 500; }
 
-        /* Code block */
-        pre {
-          background: #1a1a18; color: #c8c5bb;
-          padding: 1.25rem; border-radius: 8px;
-          font-size: 13px; overflow-x: auto; line-height: 1.6;
-          margin: 1rem 0;
-        }
+        pre { background: #1a1a18; color: #c8c5bb; padding: 1.25rem; border-radius: 8px; font-size: 13px; overflow-x: auto; line-height: 1.6; margin: 1rem 0; }
         code { font-family: 'Menlo', 'Consolas', monospace; }
 
-        /* Steps */
         .steps { list-style: none; counter-reset: steps; }
-        .steps li {
-          counter-increment: steps;
-          display: flex; gap: 14px; align-items: flex-start;
-          margin-bottom: 1rem;
-        }
+        .steps li { counter-increment: steps; display: flex; gap: 14px; align-items: flex-start; margin-bottom: 1rem; }
         .steps li::before {
           content: counter(steps);
           background: #185FA5; color: #fff;
@@ -131,18 +93,20 @@
           font-size: 13px; font-weight: 600; flex-shrink: 0; margin-top: 2px;
         }
 
-        /* Roadmap */
         .roadmap li { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #e5e3dc; font-size: 14px; }
         .roadmap li:last-child { border-bottom: none; }
         .check { color: #3B6D11; font-size: 18px; }
         .pending { color: #B4B2A9; font-size: 18px; }
 
-        /* Footer */
-        footer {
-          background: #0c1a2e; color: #85b7eb;
-          text-align: center; padding: 2rem;
-          font-size: 13px; margin-top: 3rem;
+        .btn {
+          display: inline-block; background: #185FA5; color: #fff;
+          padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500;
         }
+        .btn:hover { background: #0C447C; text-decoration: none; }
+        .btn.secondary { background: transparent; color: #185FA5; border: 1px solid #185FA5; margin-left: 10px; }
+        .btn.secondary:hover { background: #E6F1FB; }
+
+        footer { background: #0c1a2e; color: #85b7eb; text-align: center; padding: 2rem; font-size: 13px; margin-top: 3rem; }
         footer a { color: #85b7eb; }
 
         @media (max-width: 600px) {
@@ -179,15 +143,9 @@
 
     <section id="team">
         <h2>Project — Group TP07-PL-2</h2>
-        <table>
-            <thead><tr><th>Course</th><th>Nº</th><th>Name</th><th>GitHub</th></tr></thead>
-            <tbody>
-            <tr><td>LIGE-PL</td><td>123774</td><td>Ana Comparada Reganha</td><td><a href="https://github.com/anacomparada">@anacomparada</a></td></tr>
-            <tr><td>LIGE-PL</td><td>93263</td><td>Diogo Soares</td><td><a href="https://github.com/dpsoares">@dpsoares</a></td></tr>
-            <tr><td>LIGE-PL</td><td>123762</td><td>Rodrigo Couceiro</td><td><a href="https://github.com/IGE-123762">@IGE-123762</a></td></tr>
-            <tr><td>LIGE-PL</td><td>111561</td><td>Tiago Bensusan</td><td><a href="https://github.com/IGE-111561">@IGE-111561</a></td></tr>
-            </tbody>
-        </table>
+        <p style="margin-bottom:1rem; color:#5F5E5A; font-size:14px;">4 students from LIGE-PL at ISCTE-IUL.</p>
+        <a href="team.html" class="btn">Ver equipa completa →</a>
+        <a href="team.html" class="btn secondary">Maven Team Report</a>
     </section>
 
     <section id="videos">
@@ -298,9 +256,8 @@ docker run -it anacomparada/battleship-game:latest</code></pre>
         <h2>📚 Documentation</h2>
         <p>The full Javadoc API reference is available on GitHub Pages:</p>
         <br>
-        <a href="https://anacomparada.github.io/Battleship2/apidocs" target="_blank" style="display:inline-block; background:#185FA5; color:#fff; padding:10px 20px; border-radius:8px; font-size:14px; font-weight:500;">
-            View API Documentation →
-        </a>
+        <a href="apidocs/index.html" class="btn">View API Documentation →</a>
+        <a href="project-info.html" class="btn secondary">Maven Site</a>
         <br><br>
         <h3>Testing</h3>
         <p>Run the full test suite with:</p>
@@ -313,6 +270,7 @@ docker run -it anacomparada/battleship-game:latest</code></pre>
             <li><span class="check">✅</span> Basic grid implementation</li>
             <li><span class="check">✅</span> Ship placement validation</li>
             <li><span class="check">✅</span> Docker distribution</li>
+            <li><span class="check">✅</span> GitHub Pages documentation</li>
             <li><span class="pending">○</span> Add sound effects (SFX)</li>
             <li><span class="pending">○</span> Implement "Fog of War" mechanic</li>
             <li><span class="pending">○</span> Multiplayer integration (high priority)</li>
