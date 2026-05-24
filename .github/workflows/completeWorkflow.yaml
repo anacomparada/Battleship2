@@ -34,12 +34,12 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=anacomparada_Battleship2
-            -Dsonar.projectKey=anacomparada_PROJECT_KEY
-            -Dsonar.organization=anacomparada_ORG_KEY
+            -Dsonar.projectKey=${{ secrets.PROJECT_KEY }}
+            -Dsonar.organization=${{ secrets.ORG_KEY }}
 
       - name: Quality Gate SonarQube Cloud
         uses: SonarSource/sonarqube-quality-gate-action@v1
+        timeout-minutes: 5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
@@ -50,10 +50,10 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Construir imagem Docker
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/meu-projeto:latest .
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/battleship-game:latest .
 
       - name: Publicar imagem no Docker Hub
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/meu-projeto:latest
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/battleship-game:latest
 
       - name: Gerar documentação
         run: mvn javadoc:javadoc
