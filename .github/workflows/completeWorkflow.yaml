@@ -36,6 +36,7 @@ jobs:
           args: >
             -Dsonar.projectKey=${{ secrets.PROJECT_KEY }}
             -Dsonar.organization=${{ secrets.ORG_KEY }}
+            -Dsonar.java.binaries=target/classes
 
       - name: Quality Gate SonarQube Cloud
         uses: SonarSource/sonarqube-quality-gate-action@v1
