@@ -34,8 +34,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=rodrigocouceiro_BattleshipGamePlayer
-            -Dsonar.organization=rodrigocouceiro
+            -Dsonar.projectKey=anacomparada_BattleshipGamePlayer
+            -Dsonar.organization=anacomparada
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.java.binaries=target/classes
 
