@@ -35,8 +35,8 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=anacomparada_Battleship2
-            -Dsonar.projectKey=SEU_PROJECT_KEY
-            -Dsonar.organization=SEU_ORG_KEY
+            -Dsonar.projectKey=anacomparada_PROJECT_KEY
+            -Dsonar.organization=anacomparada_ORG_KEY
 
       - name: Quality Gate SonarQube Cloud
         uses: SonarSource/sonarqube-quality-gate-action@v1
