@@ -29,9 +29,15 @@ jobs:
         run: mvn test
 
       - name: Validar qualidade no SonarQube Cloud
-        uses: SonarSource/sonarqube-scan-action@v5
+        uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=rodrigocouceiro_BattleshipGamePlayer
+            -Dsonar.organization=rodrigocouceiro
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.java.binaries=target/classes
 
       - name: Quality Gate SonarQube Cloud
         uses: SonarSource/sonarqube-quality-gate-action@v1
