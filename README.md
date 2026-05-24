@@ -153,7 +153,7 @@ In this phase, the group implemented a complete CI/CD pipeline integrating multi
 
 ### 🌍 Live Application
 
-👉 The game is publicly accessible at: **[SnapDeploy URL]** *(update with your URL)*
+👉 The game is publicly accessible at: we had an error in the deploying phase.
 
 ### Errors Found and Fixed
 
