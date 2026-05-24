@@ -35,7 +35,6 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=anacomparada_Battleship2
-            -Dsonar.organization=anacomparada
             -Dsonar.projectKey=SEU_PROJECT_KEY
             -Dsonar.organization=SEU_ORG_KEY
 
