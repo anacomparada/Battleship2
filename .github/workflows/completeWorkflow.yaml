@@ -1,0 +1,60 @@
+name: Complete CI/CD Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  complete-workflow:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Verificar dependências
+        run: mvn dependency:resolve
+
+      - name: Compilar o projeto
+        run: mvn clean compile
+
+      - name: Executar testes unitários
+        run: mvn test
+
+      - name: Validar qualidade no SonarQube Cloud
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Quality Gate SonarQube Cloud
+        uses: SonarSource/sonarqube-quality-gate-action@v1
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Login no Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Construir imagem Docker
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/meu-projeto:latest .
+
+      - name: Publicar imagem no Docker Hub
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/meu-projeto:latest
+
+      - name: Gerar documentação
+        run: mvn javadoc:javadoc
+
+      - name: Atualizar documentação no GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./target/site/apidocs
