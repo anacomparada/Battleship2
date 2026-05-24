@@ -34,10 +34,10 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=anacomparada_BattleshipGamePlayer
+            -Dsonar.projectKey=anacomparada_Battleship2
             -Dsonar.organization=anacomparada
-            -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.java.binaries=target/classes
+            -Dsonar.projectKey=SEU_PROJECT_KEY
+            -Dsonar.organization=SEU_ORG_KEY
 
       - name: Quality Gate SonarQube Cloud
         uses: SonarSource/sonarqube-quality-gate-action@v1
